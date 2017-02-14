@@ -3,12 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using IsiiSports.Auth;
 using IsiiSports.Helpers;
 using IsiiSports.Models;
 using Microsoft.WindowsAzure.MobileServices;
 using Microsoft.WindowsAzure.MobileServices.SQLiteStore;
 using Microsoft.WindowsAzure.MobileServices.Sync;
 using Plugin.Connectivity;
+using Xamarin.Forms;
 
 namespace IsiiSports.Services
 {
@@ -21,8 +23,11 @@ namespace IsiiSports.Services
 
         #region Properties
 
-        public MobileServiceClient Client { get; set; }
-        public static string DbPath { get; set; } = "syncstore2.db";
+        public MobileServiceClient Client { get; protected set; }
+
+        public MobileServiceAuthenticationProvider AuthProvider { get; protected set; }
+        public static bool UseAuth { get; protected set; } = true;
+        public static string DbPath { get; protected set; } = "syncstore2.db";
 
         #endregion
 
@@ -33,7 +38,7 @@ namespace IsiiSports.Services
             if (Client?.SyncContext?.IsInitialized ?? false)
                 return;
 
-            const string appUrl = "https://mobile-da5ef11f-5046-4f48-835c-da199cd3c68f.azurewebsites.net/";
+            const string appUrl = "https://isiisports.azurewebsites.net/";
 
 #if AUTH
             UseAuth = true;
@@ -55,7 +60,7 @@ namespace IsiiSports.Services
             SQLitePCL.Batteries.Init();
             var store = new MobileServiceSQLiteStore(DbPath);
 
-            //Define table
+            //Define tables
             store.DefineTable<Game>();
             store.DefineTable<Team>();
             store.DefineTable<Player>();
@@ -84,6 +89,40 @@ namespace IsiiSports.Services
 
             return await gameTable.ToEnumerableAsync();
                         
+        }
+
+        public async Task<bool> LoginAsync(string authProvider)
+        {
+            await Initialize();
+
+            var auth = DependencyService.Get<IAuthentication>();
+
+            AuthProvider = (MobileServiceAuthenticationProvider) Enum.Parse(typeof(MobileServiceAuthenticationProvider), authProvider);
+
+            var user = await auth.LoginAsync(Client, AuthProvider);
+
+            if (user == null)
+            {
+                Settings.AuthToken = string.Empty;
+                Settings.UserId = string.Empty;
+                Device.BeginInvokeOnMainThread(async () =>
+                {
+                    await Application.Current.MainPage.DisplayAlert("Login Error", "Unable to login, please try again", "OK");
+                });
+                return false;
+            }
+
+            //var socialLoginResult = await GetUserData();
+
+            Settings.AuthToken = user.MobileServiceAuthenticationToken;
+            Settings.UserId = user.UserId;
+
+            return true;
+        }
+
+        public Task<bool> LoginAsync()
+        {
+            return LoginAsync(AuthProvider.ToString());
         }
 
         #endregion

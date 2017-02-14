@@ -8,5 +8,6 @@ namespace IsiiSports.Services
 {
     public interface IAzureService
     {
+        Task<bool> LoginAsync();
     }
 }
