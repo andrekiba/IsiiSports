@@ -27,7 +27,7 @@ namespace IsiiSports.Services
 
         public MobileServiceAuthenticationProvider AuthProvider { get; protected set; }
         public static bool UseAuth { get; protected set; } = true;
-        public static string DbPath { get; protected set; } = "syncstore2.db";
+        public static string DbPath { get; set; } = "syncstore2.db";
 
         #endregion
 
