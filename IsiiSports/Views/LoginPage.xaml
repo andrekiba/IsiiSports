@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:controls="clr-namespace:IsiiSports.Controls;assembly=IsiiSports"
+             xmlns:converters="clr-namespace:IsiiSports.Converters;assembly=IsiiSports"
+             x:Class="IsiiSports.Views.Team">
+
+  <Grid VerticalOptions="Fill" HorizontalOptions="Fill" Padding="24">
+    
+    <StackLayout Padding="24,0" Scale="0" VerticalOptions="Center">
+      
+    </StackLayout>
+
+    <StackLayout x:Name="ButtonStack" Spacing="0" Scale="0" VerticalOptions="End">
+      <ActivityIndicator IsVisible="{Binding IsBusy}" IsRunning="{Binding IsBusy}" Color="White" HorizontalOptions="Center"
+        VerticalOptions="EndAndExpand" />
+
+      <Label Text="{Binding AuthenticationStatus, StringFormat='\{0\}...'}" IsVisible="{Binding IsBusy}"  FontSize="Medium"
+        HorizontalTextAlignment="Center" VerticalTextAlignment="Center" VerticalOptions="EndAndExpand" HeightRequest="70" />
+
+      <controls:ImageButton x:Name="GoogleButton" Text="Login with Google"
+        BackgroundColor="{StaticResource BlueDark}" VerticalOptions="EndAndExpand"
+        IsVisible="{Binding IsBusy, Converter={x:Static converters:InverseBoolConverter.Instance}}"
+        Command="{Binding LoginCommand}" CommandParameter="Google"/>
+
+      <controls:ImageButton x:Name="FacebookButton" Text="Login with Facebook"
+        BackgroundColor="{StaticResource BlueDark}" VerticalOptions="EndAndExpand"
+        IsVisible="{Binding IsBusy, Converter={x:Static converters:InverseBoolConverter.Instance}}" 
+        Command="{Binding LoginCommand}" CommandParameter="Facebook"/>
+      
+    </StackLayout>
+    
+  </Grid>
+  
+  <!--<Grid VerticalOptions="Center" Padding="40" RowSpacing="20">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="0.4*"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <Frame Grid.Row="0" Padding="10">
+      <Image x:Name="LoginIcon" Source="cameron.png" HorizontalOptions="Center"/>
+    </Frame>
+
+    <Label Grid.Row="1" Text="ISII Sports" FontSize="14"
+           TextColor="Black" HorizontalOptions="Center" VerticalOptions="Center"/>
+
+    <Grid Grid.Row="2">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <Label Text="Username" Grid.Row="0" VerticalOptions="Center"/>
+      <Entry Text="{Binding UserName, Mode=TwoWay}" Grid.Row="1" VerticalOptions="Center"/>
+    </Grid>
+
+    <Grid Grid.Row="3">
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+      <Label Text="Password" Grid.Row="0" VerticalOptions="Center"/>
+      <Entry Text="{Binding Password, Mode=TwoWay}"  Grid.Row="1" VerticalOptions="Center"/>
+    </Grid>
+
+    <Button Grid.Row="4" x:Name="LoginButton" Text="Login" Command="{Binding LoginCommand}"/>
+
+   </Grid>-->
+</ContentPage>
