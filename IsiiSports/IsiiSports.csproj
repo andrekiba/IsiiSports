@@ -1,5 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="..\IsiiSports.Shared\IsiiSports.Shared.projitems" Label="Shared" Condition="Exists('..\IsiiSports.Shared\IsiiSports.Shared.projitems')" />
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
@@ -40,43 +41,55 @@
     </Compile>
     <Compile Include="Auth\AuthHandler.cs" />
     <Compile Include="Auth\IAuthentication.cs" />
+    <Compile Include="Base\Configuration.cs" />
     <Compile Include="Controls\ImageButton.xaml.cs">
       <DependentUpon>ImageButton.xaml</DependentUpon>
     </Compile>
     <Compile Include="Controls\SportButton.cs" />
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Helpers\Settings.cs" />
+    <Compile Include="Interfaces\IGameResultStore.cs" />
     <Compile Include="MainPage.xaml.cs">
       <DependentUpon>MainPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Models\GameField.cs" />
-    <Compile Include="Models\Game.cs" />
-    <Compile Include="Models\Player.cs" />
-    <Compile Include="Models\Team.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\AzureService.cs" />
-    <Compile Include="Services\IAzureService.cs" />
+    <Compile Include="Services\Stores\GameResultStore.cs" />
+    <Compile Include="Services\Stores\GameFieldStore.cs" />
+    <Compile Include="Services\Stores\GameStore.cs" />
+    <Compile Include="Services\Stores\PlayerStore.cs" />
+    <Compile Include="Services\Stores\TeamStore.cs" />
     <Compile Include="ViewModels\BaseViewModel.cs" />
     <Compile Include="ViewModels\GameViewModel.cs" />
     <Compile Include="ViewModels\GamesViewModel.cs" />
     <Compile Include="ViewModels\LoginViewModel.cs" />
     <Compile Include="ViewModels\TeamViewModel.cs" />
     <Compile Include="ViewModels\TeamsViewModel.cs" />
-    <Compile Include="Views\GamePage.xaml.cs">
+    <Compile Include="Pages\GamePage.xaml.cs">
       <DependentUpon>GamePage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\GamesPage.xaml.cs">
+    <Compile Include="Pages\GamesPage.xaml.cs">
       <DependentUpon>GamesPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\LoginPage.xaml.cs">
+    <Compile Include="Pages\LoginPage.xaml.cs">
       <DependentUpon>LoginPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TeamPage.xaml.cs">
+    <Compile Include="Pages\TeamPage.xaml.cs">
       <DependentUpon>TeamPage.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Views\TeamsPage.xaml.cs">
+    <Compile Include="Pages\TeamsPage.xaml.cs">
       <DependentUpon>TeamsPage.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Base\NavigationContainerNames.cs" />
+    <Compile Include="Base\DependentCommand.cs" />
+    <Compile Include="Services\Stores\BaseStore.cs" />
+    <Compile Include="Services\AzureService.cs" />
+    <Compile Include="Interfaces\IAzureService.cs" />
+    <Compile Include="Interfaces\IBaseStore.cs" />
+    <Compile Include="Interfaces\IGameFieldStore.cs" />
+    <Compile Include="Interfaces\IGameStore.cs" />
+    <Compile Include="Interfaces\IPlayerStore.cs" />
+    <Compile Include="Interfaces\ITeamStore.cs" />
+    <Compile Include="Base\DesignViewModelLocator.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainPage.xaml">
@@ -197,6 +210,15 @@
     <Reference Include="ImageCircle.Forms.Plugin.Abstractions">
       <HintPath>..\packages\Xam.Plugins.Forms.ImageCircle.1.8.1\lib\portable-net45+wp80+win8+wpa81\ImageCircle.Forms.Plugin.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="Splat">
+      <HintPath>..\packages\Splat.1.6.2\lib\Portable-net45+win+wpa81+wp80\Splat.dll</HintPath>
+    </Reference>
+    <Reference Include="Acr.UserDialogs">
+      <HintPath>..\packages\Acr.UserDialogs.6.3.8\lib\portable-win+net45+wp8+win8+wpa81\Acr.UserDialogs.dll</HintPath>
+    </Reference>
+    <Reference Include="Acr.UserDialogs.Interface">
+      <HintPath>..\packages\Acr.UserDialogs.6.3.8\lib\portable-win+net45+wp8+win8+wpa81\Acr.UserDialogs.Interface.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
@@ -205,25 +227,25 @@
     <Content Include="FodyWeavers.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Views\GamePage.xaml">
+    <EmbeddedResource Include="Pages\GamePage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Views\GamesPage.xaml">
+    <EmbeddedResource Include="Pages\GamesPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Views\TeamsPage.xaml">
+    <EmbeddedResource Include="Pages\TeamsPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Views\TeamPage.xaml">
+    <EmbeddedResource Include="Pages\TeamPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
@@ -232,7 +254,7 @@
     <Folder Include="Cells\" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Views\LoginPage.xaml">
+    <EmbeddedResource Include="Pages\LoginPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>

@@ -5,6 +5,8 @@ using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using FreshMvvm;
+using IsiiSports.Interfaces;
 using IsiiSports.Services;
 using Microsoft.WindowsAzure.MobileServices;
 using Xamarin.Forms;
@@ -28,8 +30,8 @@ namespace IsiiSports.Auth
                 if (isReauthenticating)
                     return response;
 
-                var service = DependencyService.Get<AzureService>();
-                var client = service.Client;
+                var service = FreshIOC.Container.Resolve<IAzureService>();
+                var client = AzureService.Client;
 
                 var authToken = client.CurrentUser.MobileServiceAuthenticationToken;
                 await Semaphore.WaitAsync(cancellationToken);

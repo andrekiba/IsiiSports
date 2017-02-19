@@ -13,7 +13,17 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IsiiSports.UWP", "IsiiSport
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "IsiiSports.UITests", "IsiiSports.UITests\IsiiSports.UITests.csproj", "{ACA61F8F-D1EF-4144-B27A-55CEC4F6329D}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "IsiiSports.Shared", "IsiiSports.Shared\IsiiSports.Shared.shproj", "{A02B9C69-4032-4894-897A-7132F0ED639B}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Shared", "Shared", "{36CA93CF-5C0E-4334-AE1E-C0A8CA8062D4}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Targets", "Targets", "{B92E25AB-D9DC-4D0D-85A0-40DED5B3B6E0}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		IsiiSports.Shared\IsiiSports.Shared.projitems*{80ecf7b8-2ba4-4ffa-ab11-d045081c9398}*SharedItemsImports = 4
+		IsiiSports.Shared\IsiiSports.Shared.projitems*{a02b9c69-4032-4894-897a-7132f0ed639b}*SharedItemsImports = 13
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Ad-Hoc|Any CPU = Ad-Hoc|Any CPU
 		Ad-Hoc|ARM = Ad-Hoc|ARM
@@ -304,5 +314,13 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{80ECF7B8-2BA4-4FFA-AB11-D045081C9398} = {36CA93CF-5C0E-4334-AE1E-C0A8CA8062D4}
+		{6CCF3DE1-BF27-43F1-B275-7C8EC818ADFC} = {B92E25AB-D9DC-4D0D-85A0-40DED5B3B6E0}
+		{0370EBBC-15EF-46C5-94B0-653D0498C1A7} = {B92E25AB-D9DC-4D0D-85A0-40DED5B3B6E0}
+		{1FD22A95-1AF0-4695-93F5-A7AE25ABAFD0} = {B92E25AB-D9DC-4D0D-85A0-40DED5B3B6E0}
+		{ACA61F8F-D1EF-4144-B27A-55CEC4F6329D} = {B92E25AB-D9DC-4D0D-85A0-40DED5B3B6E0}
+		{A02B9C69-4032-4894-897A-7132F0ED639B} = {36CA93CF-5C0E-4334-AE1E-C0A8CA8062D4}
 	EndGlobalSection
 EndGlobal

@@ -1,9 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+﻿using Acr.UserDialogs;
 using FreshMvvm;
+using IsiiSports.Base;
+using IsiiSports.Interfaces;
 using IsiiSports.Services;
+using IsiiSports.Services.Stores;
 using IsiiSports.ViewModels;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
@@ -13,55 +13,50 @@ using Device = Xamarin.Forms.Device;
 
 namespace IsiiSports
 {
-    public partial class App : Application
-    {
-        public App()
-        {
-            InitializeComponent();
+	public partial class App : Application
+	{
+		public App()
+		{
+			InitializeComponent();
+			SetupIoC();
 
-            //MainPage = new IsiiSports.MainPage();
+			var loginPage = FreshPageModelResolver.ResolvePageModel<LoginViewModel>();
+			var loginContainer = new FreshNavigationContainer(loginPage, NavigationContainerNames.LoginContainer);
 
-            FreshIOC.Container.Register<IAzureService, AzureService>();
+			var tabbedNavigation = new FreshTabbedNavigationContainer();
+			tabbedNavigation.AddTab<GamesViewModel>("Games", Device.OnPlatform("facebook", "facebook", "Assets/facebook"));
+			tabbedNavigation.AddTab<TeamsViewModel>("Teams", Device.OnPlatform("google", "google", "Assets/google"));
+			var mainContainer = tabbedNavigation;
 
-            //var masterDetailGames = new FreshMasterDetailNavigationContainer();
-            //masterDetailGames.Init("Games");
-            //masterDetailGames.AddPage<GamesViewModel>("Games", null);
-            //masterDetailGames.AddPage<GameViewModel>("Game", null);
+			MainPage = loginContainer;
 
-            //var masterDetailTeams = new FreshMasterDetailNavigationContainer();
-            //masterDetailTeams.Init("Teams");
-            //masterDetailTeams.AddPage<TeamsViewModel>("Teams", null);
-            //masterDetailTeams.AddPage<TeamViewModel>("Team", null);
+		}
 
+		private static void SetupIoC()
+		{
+			FreshIOC.Container.Register<IAzureService, AzureService>();
+		    FreshIOC.Container.Register<IPlayerStore, PlayerStore>();
+		    FreshIOC.Container.Register<ITeamStore, TeamStore>();
+		    FreshIOC.Container.Register<IGameStore, GameStore>();
+		    FreshIOC.Container.Register<IGameFieldStore, GameFieldStore>();
+		    FreshIOC.Container.Register<IGameResultStore, GameResultStore>();
+			FreshIOC.Container.Register(UserDialogs.Instance);
+		}
 
-            var tabbedNavigation = new FreshTabbedNavigationContainer();
-            //tabbedNavigation.AddTab<GamesViewModel>("Games", Device.OnPlatform("poofTab.png", "poofTab.png", "Assets/poofTab.png") );
-            //tabbedNavigation.AddTab<TeamsViewModel>("Teams", Device.OnPlatform("poofListTab.png", "poofListTab.png", "Assets/poofListTab.png"));
+		protected override void OnStart()
+		{
+			// Handle when your app starts
+			MobileCenter.Start(typeof(Analytics), typeof(Crashes));
+		}
 
-            tabbedNavigation.AddTab<GamesViewModel>("Games", Device.OnPlatform("", "", ""));
-            tabbedNavigation.AddTab<TeamsViewModel>("Teams", Device.OnPlatform("", "", ""));
+		protected override void OnSleep()
+		{
+			// Handle when your app sleeps
+		}
 
-            //tabbedNavigation.BarBackgroundColor = (Color)Resources[@"BarTint"];
-            //tabbedNavigation.BarTextColor = (Color)Resources[@"Back"];
-            //tabbedNavigation.Title = "POOF";
-            MainPage = tabbedNavigation;
-
-        }
-
-        protected override void OnStart()
-        {
-            // Handle when your app starts
-            MobileCenter.Start(typeof(Analytics), typeof(Crashes));
-        }
-
-        protected override void OnSleep()
-        {
-            // Handle when your app sleeps
-        }
-
-        protected override void OnResume()
-        {
-            // Handle when your app resumes
-        }
-    }
+		protected override void OnResume()
+		{
+			// Handle when your app resumes
+		}
+	}
 }

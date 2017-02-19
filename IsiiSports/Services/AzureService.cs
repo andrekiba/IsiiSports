@@ -1,49 +1,62 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using FreshMvvm;
 using IsiiSports.Auth;
+using IsiiSports.Base;
+using IsiiSports.DataObjects;
 using IsiiSports.Helpers;
-using IsiiSports.Models;
+using IsiiSports.Interfaces;
 using Microsoft.WindowsAzure.MobileServices;
 using Microsoft.WindowsAzure.MobileServices.SQLiteStore;
 using Microsoft.WindowsAzure.MobileServices.Sync;
-using Plugin.Connectivity;
 using Xamarin.Forms;
 
 namespace IsiiSports.Services
 {
     public class AzureService : IAzureService
     {
-        private IMobileServiceSyncTable<Game> gameTable;
-        private IMobileServiceSyncTable<Team> teamTable;
-        private IMobileServiceSyncTable<Player> playerTable;
-        private IMobileServiceSyncTable<GameField> gameFieldTable;
+        #region Fields
+
+        private IPlayerStore playerStore;
+        private ITeamStore teamStore;
+        private IGameStore gameStore;
+        private IGameFieldStore gameFieldStore;
+        private IGameResultStore gameResultStore;
+        private readonly object locker = new object();
+
+        #endregion
 
         #region Properties
 
-        public MobileServiceClient Client { get; protected set; }
-
+        public static MobileServiceClient Client { get; protected set; }
+        public bool IsInitialized { get; private set; }
         public MobileServiceAuthenticationProvider AuthProvider { get; protected set; }
         public static bool UseAuth { get; protected set; } = true;
         public static string DbPath { get; set; } = "syncstore2.db";
+      
+        public IPlayerStore PlayerStore => playerStore ?? (playerStore = FreshIOC.Container.Resolve<IPlayerStore>());       
+        public ITeamStore TeamStore => teamStore ?? (teamStore = FreshIOC.Container.Resolve<ITeamStore>());
+        public IGameStore GameStore => gameStore ?? (gameStore = FreshIOC.Container.Resolve<IGameStore>());
+        public IGameFieldStore GameFieldStore => gameFieldStore ?? (gameFieldStore = FreshIOC.Container.Resolve<IGameFieldStore>());
+        public IGameResultStore GameResultStore => gameResultStore ?? (gameResultStore = FreshIOC.Container.Resolve<IGameResultStore>());
 
         #endregion
 
         #region Methods
 
-        private async Task Initialize()
+        public async Task InitializeAsync()
         {
-            if (Client?.SyncContext?.IsInitialized ?? false)
-                return;
-
-            const string appUrl = "https://isiisports.azurewebsites.net/";
-
+            MobileServiceSQLiteStore store;
+            lock (locker)
+            {
+                if (IsInitialized)
+                    return;
 #if AUTH
             UseAuth = true;
             
-            Client = new MobileServiceClient(appUrl, new AuthHandler());
+            Client = new MobileServiceClient(Configuration.AppUrl, new AuthHandler());
 
             if (!string.IsNullOrWhiteSpace (Settings.AuthToken) && !string.IsNullOrWhiteSpace (Settings.UserId)) {
                 Client.CurrentUser = new MobileServiceUser(Settings.UserId)
@@ -52,52 +65,68 @@ namespace IsiiSports.Services
                 };
             }
 #else
-            //Create our client
-            Client = new MobileServiceClient(appUrl);
+                //Create our client
+                Client = new MobileServiceClient(Configuration.AppUrl);
 #endif
 
-            //setup our local sqlite store and intialize our table
-            SQLitePCL.Batteries.Init();
-            var store = new MobileServiceSQLiteStore(DbPath);
+                //setup our local sqlite store and intialize our table
+                SQLitePCL.Batteries.Init();
+                store = new MobileServiceSQLiteStore(DbPath);
 
-            //Define tables
-            store.DefineTable<Game>();
-            store.DefineTable<Team>();
-            store.DefineTable<Player>();
-            store.DefineTable<GameField>();
+                //Define tables
+                store.DefineTable<Game>();
+                store.DefineTable<Team>();
+                store.DefineTable<Player>();
+                store.DefineTable<GameField>();
+                store.DefineTable<GameResult>();
 
-            //Initialize SyncContext
-            await Client.SyncContext.InitializeAsync(store, new MobileServiceSyncHandler());
-
-            //Get our sync table that will call out to azure
-            gameTable = Client.GetSyncTable<Game>();
-            teamTable = Client.GetSyncTable<Team>();
-            playerTable = Client.GetSyncTable<Player>();
-            gameFieldTable = Client.GetSyncTable<GameField>();
-        }
-
-       public async Task<IEnumerable<Game>> GetGames(bool sync = false)
-        {
-            await Initialize();
-
-            if (sync && CrossConnectivity.Current.IsConnected)
-            {
-                await Client.SyncContext.PushAsync();
-                //await poofTable.PullAsync("allGames" + Settings.UserId, poofTable.CreateQuery());
-                await gameTable.PullAsync("allGames", gameTable.CreateQuery());
+                IsInitialized = true;
             }
 
-            return await gameTable.ToEnumerableAsync();
-                        
+            //InitializeAsync SyncContext
+            await Client.SyncContext.InitializeAsync(store, new MobileServiceSyncHandler()).ConfigureAwait(false);
         }
 
-        public async Task<bool> LoginAsync(string authProvider)
+        public async Task<bool> SyncAllAsync()
         {
-            await Initialize();
+            if (!IsInitialized)
+                await InitializeAsync();
+
+            var taskList = new List<Task<bool>>
+            {
+                PlayerStore.SyncAsync(),
+                TeamStore.SyncAsync(),
+                GameStore.SyncAsync(),
+                GameFieldStore.SyncAsync(),
+                GameResultStore.SyncAsync()
+            };
+
+            var successes = await Task.WhenAll(taskList).ConfigureAwait(false);
+            return successes.Any(x => !x);
+        }
+
+        public Task DropEverythingAsync()
+        {
+            PlayerStore.DropTable();
+            TeamStore.DropTable();
+            GameStore.DropTable();
+            GameFieldStore.DropTable();
+            GameResultStore.DropTable();
+
+            IsInitialized = false;
+            return Task.FromResult(true);
+        }
+
+
+        #region Login
+        public async Task<bool> LoginAsync(string authProvider = null)
+        {
+            await InitializeAsync();
 
             var auth = DependencyService.Get<IAuthentication>();
 
-            AuthProvider = (MobileServiceAuthenticationProvider) Enum.Parse(typeof(MobileServiceAuthenticationProvider), authProvider);
+            if (string.IsNullOrEmpty(authProvider))
+                AuthProvider = (MobileServiceAuthenticationProvider)Enum.Parse(typeof(MobileServiceAuthenticationProvider), authProvider);
 
             var user = await auth.LoginAsync(Client, AuthProvider);
 
@@ -105,14 +134,12 @@ namespace IsiiSports.Services
             {
                 Settings.AuthToken = string.Empty;
                 Settings.UserId = string.Empty;
-                Device.BeginInvokeOnMainThread(async () =>
-                {
-                    await Application.Current.MainPage.DisplayAlert("Login Error", "Unable to login, please try again", "OK");
-                });
+                //Device.BeginInvokeOnMainThread(async () =>
+                //{
+                //    await Application.Current.MainPage.DisplayAlert("Login Error", "Unable to login, please try again", "OK");
+                //});
                 return false;
             }
-
-            //var socialLoginResult = await GetUserData();
 
             Settings.AuthToken = user.MobileServiceAuthenticationToken;
             Settings.UserId = user.UserId;
@@ -120,10 +147,7 @@ namespace IsiiSports.Services
             return true;
         }
 
-        public Task<bool> LoginAsync()
-        {
-            return LoginAsync(AuthProvider.ToString());
-        }
+        #endregion
 
         #endregion
     }

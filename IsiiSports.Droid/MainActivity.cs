@@ -4,18 +4,18 @@ using Android.Content.PM;
 using Android.OS;
 using Plugin.Permissions;
 using ImageCircle.Forms.Plugin.Droid;
+using IsiiSports.Base;
 using IsiiSports.Services;
 using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
+using Acr.UserDialogs;
 
 namespace IsiiSports.Droid
 {
     [Activity(Label = "IsiiSports", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
-        private const string MobileCenterAppKey = "6487a36e-c568-4569-9800-a9167dbdb3d5";
-
         protected override void OnCreate(Bundle bundle)
         {
             TabLayoutResource = Resource.Layout.Tabbar;
@@ -37,12 +37,13 @@ namespace IsiiSports.Droid
 
             #region Mobile Center
 
-            MobileCenter.Start(MobileCenterAppKey, typeof(Analytics), typeof(Crashes));
+            MobileCenter.Start(Configuration.MobileCenterAppKey, typeof(Analytics), typeof(Crashes));
 
             #endregion 
 
             global::Xamarin.Forms.Forms.Init(this, bundle);
             ImageCircleRenderer.Init();
+			UserDialogs.Init(this);
             LoadApplication(new App());
         }
 

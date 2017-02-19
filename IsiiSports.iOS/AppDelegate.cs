@@ -1,5 +1,6 @@
 ﻿using Foundation;
 using ImageCircle.Forms.Plugin.iOS;
+using IsiiSports.Base;
 using Microsoft.Azure.Mobile;
 using UIKit;
 
@@ -19,8 +20,6 @@ namespace IsiiSports.iOS
         // You have 17 seconds to return from this method, or iOS will terminate your application.
         //
 
-        private const string MobileCenterAppKey = "6487a36e-c568-4569-9800-a9167dbdb3d5";
-
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             #region Azure
@@ -31,7 +30,7 @@ namespace IsiiSports.iOS
 
             #region Mobile Center
 
-            MobileCenter.Configure(MobileCenterAppKey);
+            MobileCenter.Configure(Configuration.MobileCenterAppKey);
 
             #endregion
 
