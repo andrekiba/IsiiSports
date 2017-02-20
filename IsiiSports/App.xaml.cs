@@ -23,12 +23,13 @@ namespace IsiiSports
 			var loginPage = FreshPageModelResolver.ResolvePageModel<LoginViewModel>();
 			var loginContainer = new FreshNavigationContainer(loginPage, NavigationContainerNames.LoginContainer);
 
-			var tabbedNavigation = new FreshTabbedNavigationContainer();
+			var tabbedNavigation = new FreshTabbedNavigationContainer(NavigationContainerNames.MainContainer);
 			tabbedNavigation.AddTab<GamesViewModel>("Games", Device.OnPlatform("facebook", "facebook", "Assets/facebook"));
 			tabbedNavigation.AddTab<TeamsViewModel>("Teams", Device.OnPlatform("google", "google", "Assets/google"));
+
 			var mainContainer = tabbedNavigation;
 
-			MainPage = loginContainer;
+			MainPage = mainContainer;
 
 		}
 
