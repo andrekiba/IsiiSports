@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Globalization;
+using System.Linq;
 using Xamarin.Forms;
 
 namespace IsiiSports.Converters
@@ -88,6 +89,20 @@ namespace IsiiSports.Converters
             var list = value as IList;
 
             return list?.Count > 0;
+        }
+    }
+
+    public class NameToInitialsConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var words = value.ToString().Split(' ').Take(2);
+            return words.Aggregate("", (current, word) => current + word[0]);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
         }
     }
 }

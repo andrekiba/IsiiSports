@@ -469,7 +469,7 @@ namespace IsiiSports.Droid
 			
 			// aapt resource value: 0x7f010145
 			public const int com_facebook_tooltip_mode = 2130772293;
-			
+      
 			// aapt resource value: 0x7f0100d8
 			public const int commitIcon = 2130772184;
 			
@@ -1476,7 +1476,7 @@ namespace IsiiSports.Droid
 			
 			// aapt resource value: 0x7f0b0033
 			public const int primary_text_disabled_material_light = 2131427379;
-			
+
 			// aapt resource value: 0x7f0b0034
 			public const int ripple_material_dark = 2131427380;
 			
@@ -1936,7 +1936,7 @@ namespace IsiiSports.Droid
 			
 			// aapt resource value: 0x7f060055
 			public const int notification_large_icon_width = 2131099733;
-			
+      
 			// aapt resource value: 0x7f060056
 			public const int notification_subtext_size = 2131099734;
 			
@@ -2561,7 +2561,7 @@ namespace IsiiSports.Droid
 			
 			// aapt resource value: 0x7f0200c9
 			public const int roundedbgdark = 2130837705;
-			
+
 			static Drawable()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
@@ -2589,7 +2589,7 @@ namespace IsiiSports.Droid
 			
 			// aapt resource value: 0x7f070061
 			public const int action_bar_root = 2131165281;
-			
+
 			// aapt resource value: 0x7f070002
 			public const int action_bar_spinner = 2131165186;
 			
@@ -3408,7 +3408,7 @@ namespace IsiiSports.Droid
 			
 			// aapt resource value: 0x7f030045
 			public const int Toolbar = 2130903109;
-			
+
 			static Layout()
 			{
 				global::Android.Runtime.ResourceIdManager.UpdateIdValues();
@@ -3586,7 +3586,7 @@ namespace IsiiSports.Droid
 			
 			// aapt resource value: 0x7f08000d
 			public const int mr_system_route_name = 2131230733;
-			
+
 			// aapt resource value: 0x7f08000e
 			public const int mr_user_route_category_name = 2131230734;
 			

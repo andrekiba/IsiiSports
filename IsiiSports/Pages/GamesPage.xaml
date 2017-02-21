@@ -1,6 +1,118 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="IsiiSports.Pages.GamesPage">
-  <Label Text="{Binding MainText}" VerticalOptions="Center" HorizontalOptions="Center" />
+             xmlns:d="clr-namespace:IsiiSports.Base;assembly=IsiiSports"
+             xmlns:plugin="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
+             xmlns:conv="clr-namespace:IsiiSports.Converters;assembly=IsiiSports"
+             x:Class="IsiiSports.Pages.GamesPage"
+             BindingContext="{x:Static d:DesignViewModelLocator.GamesViewModel}"
+             BackgroundColor="#e6e6e6">
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <conv:NameToInitialsConverter x:Key="NameToInitialsConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+  
+  <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
+    <!--<Label Text="Prova" TextColor="Black"></Label>-->
+    <ListView ItemsSource="{Binding GameList}" 
+              HorizontalOptions="Fill" 
+              VerticalOptions="Fill"
+              RowHeight="120">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <ViewCell.View>
+              <Grid BackgroundColor="White"
+                    Margin="6,6,6,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="1"/>
+                  <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid Grid.Column="0">
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                  </Grid.RowDefinitions>
+                  <StackLayout Grid.Row="0" Orientation="Horizontal">
+                    <Grid Margin="8,4,4,4">
+                      <plugin:CircleImage WidthRequest="25" 
+                                          HeightRequest="25" 
+                                          VerticalOptions="Center" 
+                                          HorizontalOptions="Center" 
+                                          FillColor="#27ae60"/>
+                      <Label Text="{Binding Team1.Name, Converter={StaticResource NameToInitialsConverter}}"
+                             VerticalTextAlignment="Center"
+                             HorizontalTextAlignment="Center"
+                             Style="{DynamicResource EvolveListItemTextStyle}"
+                             TextColor="White"
+                             StyleId="EventItemCircleDate"/>
+                    </Grid>
+                    <Label Text="{Binding Team1.Name}"
+                           TextColor="Black"
+                           VerticalOptions="Center"
+                           FontSize="16"/>
+                  </StackLayout>
+                  <StackLayout Grid.Row="1" Orientation="Horizontal">
+                    <Grid Margin="8,4,4,4">
+                      <plugin:CircleImage WidthRequest="25"
+                                          HeightRequest="25"
+                                          VerticalOptions="Center"
+                                          HorizontalOptions="Center"
+                                          FillColor="#c0392b"/>
+                      <Label Text="{Binding Team2.Name, Converter={StaticResource NameToInitialsConverter}}"
+                             VerticalTextAlignment="Center"
+                             HorizontalTextAlignment="Center"
+                             Style="{DynamicResource EvolveListItemTextStyle}"
+                             TextColor="White"
+                             StyleId="EventItemCircleDate"/>
+                    </Grid>
+                    <Label Text="{Binding Team2.Name}"
+                           TextColor="Black"
+                           VerticalOptions="Center"
+                           FontSize="16"/>
+                  </StackLayout>
+                </Grid>
+                <Grid Grid.Column="1" 
+                      BackgroundColor="#e6e6e6"
+                      HorizontalOptions="FillAndExpand"
+                      VerticalOptions="FillAndExpand"
+                      Margin="0,12"/>
+                <Grid Grid.Column="2"
+                      VerticalOptions="Center"
+                      Margin="12">
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="2*"/>
+                  </Grid.RowDefinitions>
+                  <Label Text="{Binding GameDate, StringFormat=\{0:m\}}" 
+                         TextColor="#2c3e50" 
+                         Grid.Row="0" 
+                         FontSize="14"
+                         VerticalOptions="Center" 
+                         HorizontalTextAlignment="Center" 
+                         FontAttributes="Bold"/>
+                  <Label Text="{Binding GameDate, StringFormat=\{0:t\}}" 
+                         TextColor="#2c3e50" 
+                         Grid.Row="1" 
+                         FontSize="14"
+                         VerticalOptions="Center" 
+                         HorizontalTextAlignment="Center"
+                         FontAttributes="Bold"/>
+                  <Label Text="{Binding GameField.Name}" 
+                         TextColor="#2c3e50" 
+                         FontSize="13"
+                         Grid.Row="2"
+                         VerticalOptions="Center" 
+                         HorizontalTextAlignment="Center"/>
+                </Grid>
+              </Grid>
+            </ViewCell.View>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+  </Grid>
 </ContentPage>
