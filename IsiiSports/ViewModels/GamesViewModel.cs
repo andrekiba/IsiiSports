@@ -1,4 +1,5 @@
 ﻿using IsiiSports.DataObjects;
+using MvvmHelpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,20 +8,21 @@ namespace IsiiSports.ViewModels
 {
     public class GamesViewModel : BaseViewModel
     {
-        public IEnumerable<Game> GameList { get; set; }
+        public ObservableRangeCollection<Game> GameList { get; set; } = new ObservableRangeCollection<Game>();
 
         public GamesViewModel()
         {
 
         }
 
-        protected override async void ViewIsAppearing(object sender, EventArgs e)
+        public override async void Init(object initData)
         {
             if (this.GameList == null)
-            {
-                //TODO: Sto facendo await dentro ad un metodo che ritorna void
-                this.GameList = await AzureService.GameStore.GetItemsAsync();
-            }
+                return;
+
+            //TODO: Sto facendo await dentro ad un metodo che ritorna void
+            var result = await AzureService.GameStore.GetItemsAsync();
+            this.GameList.ReplaceRange(result);
         }
     }
 }
