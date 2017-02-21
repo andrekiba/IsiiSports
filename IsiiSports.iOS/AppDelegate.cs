@@ -1,8 +1,11 @@
-﻿using Foundation;
+﻿using System;
+using Foundation;
+using Google.Core;
+using Google.SignIn;
 using ImageCircle.Forms.Plugin.iOS;
-using IsiiSports.Base;
 using Microsoft.Azure.Mobile;
 using UIKit;
+using Configuration = IsiiSports.Base.Configuration;
 
 namespace IsiiSports.iOS
 {
@@ -22,6 +25,21 @@ namespace IsiiSports.iOS
 
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
+            #region Google auth
+
+            const string clientId = "710855082545-4cu6h49jn1679msd5tvijt607rbqjjfn.apps.googleusercontent.com";
+
+            NSError configureError;
+            Context.SharedInstance.Configure(out configureError);
+            if (configureError != null)
+            {
+                // If something went wrong, assign the clientID manually
+                Console.WriteLine("Error configuring the Google context: {0}", configureError);
+                SignIn.SharedInstance.ClientID = clientId;
+            }
+
+            #endregion
+
             #region Azure
 
             Microsoft.WindowsAzure.MobileServices.CurrentPlatform.Init();
@@ -40,6 +58,11 @@ namespace IsiiSports.iOS
             LoadApplication(new App());
 
             return base.FinishedLaunching(app, options);
+        }
+
+        public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
+        {
+            return SignIn.SharedInstance.HandleUrl(url, sourceApplication, annotation);
         }
     }
 }
