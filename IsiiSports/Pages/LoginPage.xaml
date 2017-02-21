@@ -16,7 +16,7 @@
 			<Label FontSize="60" HorizontalOptions="Center" Text="ISII Sports" TextColor="White" VerticalOptions="Center"/>
 		</StackLayout>
 		<StackLayout x:Name="ButtonStack" Grid.Row="1" HorizontalOptions="CenterAndExpand" Spacing="30" VerticalOptions="Center">
-			<controls:ImageButton x:Name="GoogleButton"
+			<!--<controls:ImageButton x:Name="GoogleButton"
 				ButtonBackgroundColor="{StaticResource GreenLight}"
 				Command="{Binding LoginCommand}"
 				CommandParameter="Google"
@@ -31,7 +31,24 @@
 				IsVisible="{Binding IsNotBusy}"
 				Source="facebook"
 				Text="Login with Facebook"
-				WidthRequest="300"/>
+				WidthRequest="300"/>-->
+			<controls:SportButton Command="{Binding LoginCommand}"
+				CommandParameter="Google"
+				HorizontalOptions="CenterAndExpand"
+				Image="google"
+				IsVisible="{Binding IsNotBusy}"
+				Text="Login with Google"
+				WidthRequest="300"
+				HeightRequest="50"/>
+			<controls:SportButton Command="{Binding LoginCommand}"
+				CommandParameter="Facebook"
+				HorizontalOptions="CenterAndExpand"
+				Image="facebook"
+				IsVisible="{Binding IsNotBusy}"
+				Text="Login with Facebook"
+				WidthRequest="300"
+				HeightRequest="50">
+			</controls:SportButton>
 		</StackLayout>
 	</Grid>
 </ContentPage>

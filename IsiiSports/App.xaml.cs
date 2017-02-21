@@ -13,49 +13,49 @@ using Device = Xamarin.Forms.Device;
 
 namespace IsiiSports
 {
-    public partial class App : Application
-    {
-        public App()
-        {
-            InitializeComponent();
-            SetupIoC();
+	public partial class App : Application
+	{
+		public App()
+		{
+			InitializeComponent();
+			SetupIoC();
 
-            var loginPage = FreshPageModelResolver.ResolvePageModel<LoginViewModel>();
-            var loginContainer = new FreshNavigationContainer(loginPage, NavigationContainerNames.LoginContainer);
+			var loginPage = FreshPageModelResolver.ResolvePageModel<LoginViewModel>();
+			var loginContainer = new FreshNavigationContainer(loginPage, NavigationContainerNames.LoginContainer);
 
-            var mainContainer = new FreshTabbedNavigationContainer(NavigationContainerNames.MainContainer);
-            mainContainer.AddTab<GamesViewModel>("Games", Device.OnPlatform("", "", ""));
-            mainContainer.AddTab<TeamsViewModel>("Teams", Device.OnPlatform("", "", ""));
+			var mainContainer = new FreshTabbedNavigationContainer(NavigationContainerNames.MainContainer);
+			mainContainer.AddTab<GamesViewModel>("Games", Device.OnPlatform("", "", ""));
+			mainContainer.AddTab<TeamsViewModel>("Teams", Device.OnPlatform("", "", ""));
 
-            MainPage = loginContainer;
+			MainPage = loginContainer;
 
-        }
+		}
 
-        private static void SetupIoC()
-        {
-            FreshIOC.Container.Register<IAzureService, AzureService>();
-            FreshIOC.Container.Register<IPlayerStore, PlayerStore>();
-            FreshIOC.Container.Register<ITeamStore, TeamStore>();
-            FreshIOC.Container.Register<IGameStore, GameStore>();
-            FreshIOC.Container.Register<IGameFieldStore, GameFieldStore>();
-            FreshIOC.Container.Register<IGameResultStore, GameResultStore>();
-            FreshIOC.Container.Register(UserDialogs.Instance);
-        }
+		private static void SetupIoC()
+		{
+			FreshIOC.Container.Register<IAzureService, AzureService>();
+		    FreshIOC.Container.Register<IPlayerStore, PlayerStore>();
+		    FreshIOC.Container.Register<ITeamStore, TeamStore>();
+		    FreshIOC.Container.Register<IGameStore, GameStore>();
+		    FreshIOC.Container.Register<IGameFieldStore, GameFieldStore>();
+		    FreshIOC.Container.Register<IGameResultStore, GameResultStore>();
+			FreshIOC.Container.Register(UserDialogs.Instance);
+		}
 
-        protected override void OnStart()
-        {
-            // Handle when your app starts
-            MobileCenter.Start(typeof(Analytics), typeof(Crashes));
-        }
+		protected override void OnStart()
+		{
+			// Handle when your app starts
+			MobileCenter.Start(typeof(Analytics), typeof(Crashes));
+		}
 
-        protected override void OnSleep()
-        {
-            // Handle when your app sleeps
-        }
+		protected override void OnSleep()
+		{
+			// Handle when your app sleeps
+		}
 
-        protected override void OnResume()
-        {
-            // Handle when your app resumes
-        }
-    }
+		protected override void OnResume()
+		{
+			// Handle when your app resumes
+		}
+	}
 }

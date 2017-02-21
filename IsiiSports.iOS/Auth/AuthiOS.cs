@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Facebook.LoginKit;
+using Foundation;
 using IsiiSports.Auth;
 using IsiiSports.Helpers;
 using IsiiSports.iOS.Auth;
@@ -13,11 +15,24 @@ namespace IsiiSports.iOS.Auth
 {
     public class AuthiOS : IAuthentication
     {
+        private TaskCompletionSource<string> loginTcs;
+
         public async Task<MobileServiceUser> LoginAsync(IMobileServiceClient client, MobileServiceAuthenticationProvider provider, IDictionary<string, string> parameters = null)
         {
             try
             {
-                return await client.LoginAsync(GetController(), provider, parameters);
+                string accessToken = null;
+
+                if (provider == MobileServiceAuthenticationProvider.Facebook)
+                    accessToken = await LoginFacebookAsync();               
+
+                if (provider == MobileServiceAuthenticationProvider.Google)
+                    accessToken = await LoginGoogleAsync();
+
+                //var zumoPayload = new JObject {["access_token"] = accessToken};
+                var zumoPayload = new Dictionary<string, string> { {"access_token", accessToken} };
+
+                return await client.LoginAsync(GetController(), provider, zumoPayload);
 
             }
             catch (Exception e)
@@ -49,7 +64,6 @@ namespace IsiiSports.iOS.Auth
 
             return false;
         }
-
         public void ClearCookies()
         {
             var store = Foundation.NSHttpCookieStorage.SharedStorage;
@@ -60,7 +74,6 @@ namespace IsiiSports.iOS.Auth
                 store.DeleteCookie(c);
             }
         }
-
         private static UIKit.UIViewController GetController()
         {
             var window = UIKit.UIApplication.SharedApplication.KeyWindow;
@@ -76,5 +89,43 @@ namespace IsiiSports.iOS.Auth
 
             return current;
         }
+
+        #region Facebook Client Flow
+
+        public async Task<string> LoginFacebookAsync()
+        {
+            loginTcs = new TaskCompletionSource<string>();
+            var loginManager = new LoginManager();
+
+            loginManager.LogInWithReadPermissions(new[] { "public_profile" }, GetController(), LoginTokenHandler);
+            return await loginTcs.Task;
+        }
+
+        private void LoginTokenHandler(LoginManagerLoginResult loginResult, NSError error)
+        {
+            if (loginResult.Token != null)
+            {
+                loginTcs.TrySetResult(loginResult.Token.TokenString);
+            }
+            else
+            {
+                loginTcs.TrySetException(new Exception("Facebook Client Flow Login Failed"));
+            }
+        }
+
+        #endregion
+
+        #region Google Client Flow
+
+        public async Task<string> LoginGoogleAsync()
+        {
+            loginTcs = new TaskCompletionSource<string>();
+            //var loginManager = new LoginManager();
+
+            //loginManager.LogInWithReadPermissions(new[] { "public_profile" }, GetController(), LoginTokenHandler);
+            return await loginTcs.Task;
+        }
+
+        #endregion
     }
 }
