@@ -40,6 +40,9 @@
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
     <Compile Include="Auth\AuthHandler.cs" />
+    <Compile Include="Auth\AuthUser.cs" />
+    <Compile Include="Auth\FacebookUser.cs" />
+    <Compile Include="Auth\GoogleUser.cs" />
     <Compile Include="Auth\IAuthentication.cs" />
     <Compile Include="Base\Configuration.cs" />
     <Compile Include="Controls\ImageButton.xaml.cs">

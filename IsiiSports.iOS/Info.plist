@@ -36,5 +36,24 @@
 	<string>Assets.xcassets/AppIcon.appiconset</string>
 	<key>XSLaunchImageAssets</key>
 	<string>Assets.xcassets/LaunchImage.launchimage</string>
+  <key>CFBundleURLTypes</key>
+  <array>
+    <dict>
+      <key>CFBundleURLTypes</key>
+      <string>Editor</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>com.googleusercontent.apps.710855082545-4cu6h49jn1679msd5tvijt607rbqjjfn</string>
+      </array>
+    </dict>
+    <dict>
+      <key>CFBundleURLTypes</key>
+      <string>Editor</string>
+      <key>CFBundleURLSchemes</key>
+      <array>
+        <string>net.elfo.IsiiSports</string>
+      </array>
+    </dict>
+  </array>
 </dict>
 </plist>

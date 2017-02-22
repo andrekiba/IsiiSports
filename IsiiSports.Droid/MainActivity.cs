@@ -10,6 +10,8 @@ using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
 using Acr.UserDialogs;
+using Xamarin.Facebook;
+using Xamarin.Facebook.Login;
 
 namespace IsiiSports.Droid
 {
@@ -22,6 +24,18 @@ namespace IsiiSports.Droid
             ToolbarResource = Resource.Layout.Toolbar;
 
             base.OnCreate(bundle);
+
+            #region Facebook Auth
+
+            FacebookSdk.SdkInitialize(this);
+
+            #endregion
+
+            #region Google Auth
+
+            
+
+            #endregion
 
             #region Azure
 

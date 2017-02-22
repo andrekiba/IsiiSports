@@ -2,37 +2,60 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using Facebook.CoreKit;
 using Facebook.LoginKit;
-using Foundation;
+using Google.SignIn;
 using IsiiSports.Auth;
-using IsiiSports.Helpers;
 using IsiiSports.iOS.Auth;
 using Microsoft.WindowsAzure.MobileServices;
 using Xamarin.Forms;
+using Settings = IsiiSports.Helpers.Settings;
 
 [assembly: Dependency(typeof(AuthiOS))]
 namespace IsiiSports.iOS.Auth
 {
     public class AuthiOS : IAuthentication
     {
-        private TaskCompletionSource<string> loginTcs;
-
-        public async Task<MobileServiceUser> LoginAsync(IMobileServiceClient client, MobileServiceAuthenticationProvider provider, IDictionary<string, string> parameters = null)
+        public async Task<AuthUser> LoginAsync(IMobileServiceClient client, MobileServiceAuthenticationProvider provider, IDictionary<string, string> parameters = null)
         {
             try
             {
+                var authUser = new AuthUser();
                 string accessToken = null;
 
                 if (provider == MobileServiceAuthenticationProvider.Facebook)
-                    accessToken = await LoginFacebookAsync();               
+                {
+                    var facebookToken = await LoginFacebookAsync();
+                    accessToken = facebookToken.TokenString;
+                    authUser.FacebookUser = new FacebookUser
+                    {
+                        UserId = facebookToken.UserID,
+                        AccessToken = facebookToken.TokenString
+                    };                    
+                }
 
                 if (provider == MobileServiceAuthenticationProvider.Google)
-                    accessToken = await LoginGoogleAsync();
+                {
+                    var googleUser = await LoginGoogleAsync();
+                    accessToken = googleUser.Authentication.AccessToken;
 
-                //var zumoPayload = new JObject {["access_token"] = accessToken};
-                var zumoPayload = new Dictionary<string, string> { {"access_token", accessToken} };
+                    authUser.GoogleUser = new IsiiSports.Auth.GoogleUser
+                    {
+                        UserId = googleUser.UserID,
+                        AccessToken = accessToken,
+                        IdToken = googleUser.Authentication.IdToken,
+                        Email = googleUser.Profile.Email,
+                        UserName = googleUser.Profile.Name,
+                        ProfileImageUrl = googleUser.Profile.HasImage ? googleUser.Profile.GetImageUrl(100).AbsoluteString : null
+                    };
+                    
+                }
 
-                return await client.LoginAsync(GetController(), provider, zumoPayload);
+                var zumoPayload = new Dictionary<string, string> {{"access_token", accessToken}};
+
+                authUser.MobileServiceUser = await client.LoginAsync(GetController(), provider, zumoPayload);
+
+                return authUser;
 
             }
             catch (Exception e)
@@ -42,7 +65,6 @@ namespace IsiiSports.iOS.Auth
 
             return null;
         }
-
         public virtual async Task<bool> RefreshUser(IMobileServiceClient client)
         {
             try
@@ -52,8 +74,8 @@ namespace IsiiSports.iOS.Auth
                 if (user != null)
                 {
                     client.CurrentUser = user;
-                    Settings.AuthToken = user.MobileServiceAuthenticationToken;
-                    Settings.UserId = user.UserId;
+                    Settings.AzureAuthToken = user.MobileServiceAuthenticationToken;
+                    Settings.AzureUserId = user.UserId;
                     return true;
                 }
             }
@@ -92,38 +114,54 @@ namespace IsiiSports.iOS.Auth
 
         #region Facebook Client Flow
 
-        public async Task<string> LoginFacebookAsync()
+        public async Task<AccessToken> LoginFacebookAsync()
         {
-            loginTcs = new TaskCompletionSource<string>();
+            var facebookLoginTcs = new TaskCompletionSource<AccessToken>();
             var loginManager = new LoginManager();
 
-            loginManager.LogInWithReadPermissions(new[] { "public_profile" }, GetController(), LoginTokenHandler);
-            return await loginTcs.Task;
-        }
+            loginManager.LogInWithReadPermissions(new[] { "public_profile" }, GetController(),
+                (loginResult, error) =>
+                {
+                    if (loginResult.Token != null)
+                    {
+                        facebookLoginTcs.TrySetResult(loginResult.Token); 
+                    }            
+                    else
+                        facebookLoginTcs.TrySetException(new Exception("Facebook Client Flow Login Failed"));
+                });
 
-        private void LoginTokenHandler(LoginManagerLoginResult loginResult, NSError error)
-        {
-            if (loginResult.Token != null)
-            {
-                loginTcs.TrySetResult(loginResult.Token.TokenString);
-            }
-            else
-            {
-                loginTcs.TrySetException(new Exception("Facebook Client Flow Login Failed"));
-            }
+            return await facebookLoginTcs.Task;
         }
 
         #endregion
 
         #region Google Client Flow
 
-        public async Task<string> LoginGoogleAsync()
+        public async Task<Google.SignIn.GoogleUser> LoginGoogleAsync()
         {
-            loginTcs = new TaskCompletionSource<string>();
-            //var loginManager = new LoginManager();
+            var googleLoginTcs = new TaskCompletionSource<Google.SignIn.GoogleUser>();
 
-            //loginManager.LogInWithReadPermissions(new[] { "public_profile" }, GetController(), LoginTokenHandler);
-            return await loginTcs.Task;
+            //SignIn.SharedInstance.UIDelegate = this;
+
+            SignIn.SharedInstance.SignedIn += (sender, e) => {
+
+                if (e.User != null && e.Error == null)
+                {
+                    googleLoginTcs.TrySetResult(e.User);
+                }
+                else
+                {
+                    googleLoginTcs.TrySetException(new Exception("Google Client Flow Login Failed"));
+                }
+            };
+
+            SignIn.SharedInstance.Disconnected += (sender, e) => {
+
+            };
+
+            SignIn.SharedInstance.SignInUserSilently();
+
+            return await googleLoginTcs.Task;
         }
 
         #endregion

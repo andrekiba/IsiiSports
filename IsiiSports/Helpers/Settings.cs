@@ -15,36 +15,36 @@ namespace IsiiSports.Helpers
 
         #region Setting Constants
 
-        private const string UserIdKey = "userId";
-        private static readonly string UserIdDefault = string.Empty;
+        private const string AzureUserIdKey = "userId";
+        private static readonly string AzureUserIdDefault = string.Empty;
 
-        private const string AuthTokenKey = "authToken";
-        private static readonly string AuthTokenDefault = string.Empty;
+        private const string AzureAuthTokenKey = "authToken";
+        private static readonly string AzureAuthTokenDefault = string.Empty;
 
         #endregion
 
 
-        public static string AuthToken
+        public static string AzureAuthToken
         {
             get
             {
-                return AppSettings.GetValueOrDefault(AuthTokenKey, AuthTokenDefault);
+                return AppSettings.GetValueOrDefault(AzureAuthTokenKey, AzureAuthTokenDefault);
             }
             set
             {
-                AppSettings.AddOrUpdateValue(AuthTokenKey, value);
+                AppSettings.AddOrUpdateValue(AzureAuthTokenKey, value);
             }
         }
 
-        public static string UserId
+        public static string AzureUserId
         {
             get
             {
-                return AppSettings.GetValueOrDefault(UserIdKey, UserIdDefault);
+                return AppSettings.GetValueOrDefault(AzureUserIdKey, AzureUserIdDefault);
             }
             set
             {
-                AppSettings.AddOrUpdateValue(UserIdKey, value);
+                AppSettings.AddOrUpdateValue(AzureUserIdKey, value);
             }
         }
 
@@ -55,7 +55,7 @@ namespace IsiiSports.Helpers
                 if (!AzureService.UseAuth)
                     return true;
 
-                return !string.IsNullOrWhiteSpace(UserId);
+                return !string.IsNullOrWhiteSpace(AzureUserId);
             }
         }
 

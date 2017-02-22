@@ -58,10 +58,10 @@ namespace IsiiSports.Services
             
             Client = new MobileServiceClient(Configuration.AppUrl, new AuthHandler());
 
-            if (!string.IsNullOrWhiteSpace (Settings.AuthToken) && !string.IsNullOrWhiteSpace (Settings.UserId)) {
-                Client.CurrentUser = new MobileServiceUser(Settings.UserId)
+            if (!string.IsNullOrWhiteSpace (Settings.AzureAuthToken) && !string.IsNullOrWhiteSpace (Settings.AzureUserId)) {
+                Client.CurrentUser = new MobileServiceUser(Settings.AzureUserId)
                 {
-                    MobileServiceAuthenticationToken = Settings.AuthToken
+                    MobileServiceAuthenticationToken = Settings.AzureAuthToken
                 };
             }
 #else
@@ -128,12 +128,12 @@ namespace IsiiSports.Services
             if (string.IsNullOrEmpty(authProvider))
                 AuthProvider = (MobileServiceAuthenticationProvider)Enum.Parse(typeof(MobileServiceAuthenticationProvider), authProvider);
 
-            var user = await auth.LoginAsync(Client, AuthProvider);
+            var authUser = await auth.LoginAsync(Client, AuthProvider);
 
-            if (user == null)
+            if (authUser == null)
             {
-                Settings.AuthToken = string.Empty;
-                Settings.UserId = string.Empty;
+                Settings.AzureAuthToken = string.Empty;
+                Settings.AzureUserId = string.Empty;
                 //Device.BeginInvokeOnMainThread(async () =>
                 //{
                 //    await Application.Current.MainPage.DisplayAlert("Login Error", "Unable to login, please try again", "OK");
@@ -141,8 +141,8 @@ namespace IsiiSports.Services
                 return false;
             }
 
-            Settings.AuthToken = user.MobileServiceAuthenticationToken;
-            Settings.UserId = user.UserId;
+            Settings.AzureAuthToken = authUser.MobileServiceUser.MobileServiceAuthenticationToken;
+            Settings.AzureUserId = authUser.MobileServiceUser.UserId;
 
             return true;
         }

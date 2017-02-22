@@ -25,7 +25,7 @@ namespace IsiiSports.iOS
 
         public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
-            #region Google auth
+            #region Google Auth
 
             const string clientId = "710855082545-4cu6h49jn1679msd5tvijt607rbqjjfn.apps.googleusercontent.com";
 
@@ -37,6 +37,10 @@ namespace IsiiSports.iOS
                 Console.WriteLine("Error configuring the Google context: {0}", configureError);
                 SignIn.SharedInstance.ClientID = clientId;
             }
+
+            #endregion
+
+            #region Facebook Auth
 
             #endregion
 

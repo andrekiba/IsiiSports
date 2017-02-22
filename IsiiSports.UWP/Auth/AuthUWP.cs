@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using IsiiSports.Auth;
 using IsiiSports.Helpers;
@@ -15,11 +13,12 @@ namespace IsiiSports.UWP.Auth
 {
     public class AuthUWP : IAuthentication
     {
-        public Task<MobileServiceUser> LoginAsync(IMobileServiceClient client, MobileServiceAuthenticationProvider provider, IDictionary<string, string> parameters = null)
+        public async Task<AuthUser> LoginAsync(IMobileServiceClient client, MobileServiceAuthenticationProvider provider, IDictionary<string, string> parameters = null)
         {
             try
             {
-                return client.LoginAsync(provider, parameters);
+                var authUser = new AuthUser {MobileServiceUser = await client.LoginAsync(provider, parameters)};
+                return authUser;
             }
             catch
             {
@@ -38,8 +37,8 @@ namespace IsiiSports.UWP.Auth
                 if (user != null)
                 {
                     client.CurrentUser = user;
-                    Settings.AuthToken = user.MobileServiceAuthenticationToken;
-                    Settings.UserId = user.UserId;
+                    Settings.AzureAuthToken = user.MobileServiceAuthenticationToken;
+                    Settings.AzureUserId = user.UserId;
                     return true;
                 }
             }
