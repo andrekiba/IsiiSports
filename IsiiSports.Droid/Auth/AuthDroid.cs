@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Net;
 using System.Threading.Tasks;
 using Android.App;
+using Android.Gms.Common;
+using Android.Gms.Common.Apis;
+using Android.Gms.Plus;
+using Android.Gms.Plus.Model.People;
 using Android.OS;
 using Android.Runtime;
 using IsiiSports.Auth;
@@ -36,8 +40,8 @@ namespace IsiiSports.Droid.Auth
 
                 if (provider == MobileServiceAuthenticationProvider.Google)
                 {
-                    //var googleUser = await LoginGoogleAsync();
-                    //accessToken = googleUser.Authentication.AccessToken;
+                    var person = await LoginGoogleAsync();
+                    //accessToken = person.
                     accessToken = string.Empty;
 
                     //authUser.GoogleUser = new IsiiSports.Auth.GoogleUser
@@ -211,6 +215,76 @@ namespace IsiiSports.Droid.Auth
         #endregion
 
         #region Google Client Flow
+
+        public async Task<IPerson> LoginGoogleAsync()
+        {
+            var googleLoginTcs = new TaskCompletionSource<IPerson>();
+
+            GoogleApiClient googleApiClient = null;
+
+            var googleCallback = new GoogleCallback
+            {
+                HandleConnected = connected =>
+                {
+                    if (connected)
+                    {
+                        var person = PlusClass.PeopleApi.GetCurrentPerson(googleApiClient);
+                        googleLoginTcs.TrySetResult(person);
+                    }
+                    else
+                    {
+                        googleLoginTcs.TrySetException(new Exception("Google Client Flow Login Failed"));
+                    }
+                },
+                HandleConnectionSuspended = cause =>
+                {
+                    //googleLoginTcs.TrySetException(new Exception("Google Client Flow Login Failed"));
+                },
+                HandleConnectionFailed = connectionResult =>
+                {
+                    googleLoginTcs.TrySetException(new Exception("Google Client Flow Login Failed"));
+                }
+            };
+
+            googleApiClient = new GoogleApiClient.Builder(Forms.Context)
+                .AddConnectionCallbacks(googleCallback)
+                .AddOnConnectionFailedListener(googleCallback)
+                .AddApi(PlusClass.API)
+                .AddScope(new Scope(Scopes.Profile))
+                .Build();
+
+            googleApiClient.Connect();
+
+            return await googleLoginTcs.Task;
+        }
+
+        private class GoogleCallback : Java.Lang.Object, 
+                                       GoogleApiClient.IConnectionCallbacks,
+                                       GoogleApiClient.IOnConnectionFailedListener
+        {
+
+            public Action<bool> HandleConnected { private get; set; }
+            public Action<int> HandleConnectionSuspended { private get; set; }
+            public Action<ConnectionResult> HandleConnectionFailed { private get; set; }
+
+            public void OnConnected(Bundle connectionHint)
+            {
+                var c = HandleConnected;
+                c?.Invoke(true);
+            }
+
+            public void OnConnectionSuspended(int cause)
+            {
+                var c = HandleConnectionSuspended;
+                c?.Invoke(cause);
+            }
+
+            public void OnConnectionFailed(ConnectionResult result)
+            {
+                var c = HandleConnectionFailed;
+                c?.Invoke(result);
+            }
+        }
 
         #endregion
     }

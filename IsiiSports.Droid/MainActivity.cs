@@ -10,6 +10,9 @@ using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
 using Acr.UserDialogs;
+using Android.Gms.Common;
+using Android.Gms.Common.Apis;
+using Android.Gms.Plus;
 using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
 
@@ -18,6 +21,8 @@ namespace IsiiSports.Droid
     [Activity(Label = "IsiiSports", Icon = "@drawable/icon", Theme = "@style/MainTheme", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class MainActivity : global::Xamarin.Forms.Platform.Android.FormsAppCompatActivity
     {
+        //GoogleApiClient googleApiClient;
+
         protected override void OnCreate(Bundle bundle)
         {
             TabLayoutResource = Resource.Layout.Tabbar;
@@ -33,8 +38,13 @@ namespace IsiiSports.Droid
 
             #region Google Auth
 
+            //googleApiClient = new GoogleApiClient.Builder(this)
+            //    .AddConnectionCallbacks(this)
+            //    .AddOnConnectionFailedListener(this)
+            //    .AddApi(PlusClass.API)
+            //    .AddScope(new Scope(Scopes.Profile))
+            //    .Build();
             
-
             #endregion
 
             #region Azure

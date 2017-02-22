@@ -15,6 +15,9 @@ namespace IsiiSports.Helpers
 
         #region Setting Constants
 
+        private const string AuthProviderKey = "authProvider";
+        private static readonly string AuthProviderDefault = string.Empty;
+
         private const string AzureUserIdKey = "userId";
         private static readonly string AzureUserIdDefault = string.Empty;
 
@@ -23,6 +26,18 @@ namespace IsiiSports.Helpers
 
         #endregion
 
+
+        public static string AuthProvider
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault(AuthProviderKey, AuthProviderDefault);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue(AuthProviderKey, value);
+            }
+        }
 
         public static string AzureAuthToken
         {

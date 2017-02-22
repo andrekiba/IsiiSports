@@ -1,0 +1,6 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<resources>
+  <string name="appName">Isii Sports</string>
+  <string name="facebookAppId">157854894725705</string>
+  <string name="fbLoginProtocolScheme">fb157854894725705</string>
+</resources> 

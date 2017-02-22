@@ -130,21 +130,18 @@ namespace IsiiSports.Services
 
             var authUser = await auth.LoginAsync(Client, AuthProvider);
 
-            if (authUser == null)
+            if (authUser != null)
             {
-                Settings.AzureAuthToken = string.Empty;
-                Settings.AzureUserId = string.Empty;
-                //Device.BeginInvokeOnMainThread(async () =>
-                //{
-                //    await Application.Current.MainPage.DisplayAlert("Login Error", "Unable to login, please try again", "OK");
-                //});
-                return false;
+                Settings.AuthProvider = authProvider;
+                Settings.AzureAuthToken = authUser.MobileServiceUser.MobileServiceAuthenticationToken;
+                Settings.AzureUserId = authUser.MobileServiceUser.UserId;
+                return true;
             }
 
-            Settings.AzureAuthToken = authUser.MobileServiceUser.MobileServiceAuthenticationToken;
-            Settings.AzureUserId = authUser.MobileServiceUser.UserId;
+            Settings.AzureAuthToken = string.Empty;
+            Settings.AzureUserId = string.Empty;
 
-            return true;
+            return false;
         }
 
         #endregion

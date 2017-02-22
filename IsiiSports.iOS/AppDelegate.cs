@@ -1,4 +1,5 @@
 ﻿using System;
+using Facebook.CoreKit;
 using Foundation;
 using Google.Core;
 using Google.SignIn;
@@ -42,6 +43,9 @@ namespace IsiiSports.iOS
 
             #region Facebook Auth
 
+            Facebook.CoreKit.Settings.AppID = "157854894725705"; //Facebook AppId
+            Facebook.CoreKit.Settings.DisplayName = "Isii Sports";
+
             #endregion
 
             #region Azure
@@ -61,12 +65,20 @@ namespace IsiiSports.iOS
 
             LoadApplication(new App());
 
+            //Facebook
+            ApplicationDelegate.SharedInstance.FinishedLaunching(app, options);
+
             return base.FinishedLaunching(app, options);
         }
 
         public override bool OpenUrl(UIApplication application, NSUrl url, string sourceApplication, NSObject annotation)
         {
-            return SignIn.SharedInstance.HandleUrl(url, sourceApplication, annotation);
+            //Facebook
+            if (Helpers.Settings.AuthProvider == "Facebook")            
+                return ApplicationDelegate.SharedInstance.OpenUrl(application, url, sourceApplication, annotation);
+            
+            //Google
+            return Helpers.Settings.AuthProvider == "Google" && SignIn.SharedInstance.HandleUrl(url, sourceApplication, annotation);
         }
     }
 }

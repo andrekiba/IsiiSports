@@ -1,5 +1,25 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<manifest xmlns:android="http://schemas.android.com/apk/res/android">
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" android:installLocation="auto" android:versionCode="1" package="net.elfo.IsiiSports">
 	<uses-sdk android:minSdkVersion="15" android:targetSdkVersion="23" />
-	<application android:label="IsiiSports.Droid"></application>
+	<uses-permission android:name="android.permission.INTERNET" />
+	<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+	<application android:label="IsiiSports.Droid" android:icon="@drawable/icon">
+		<!--Start Facebook Auth-->
+    <meta-data android:name="com.facebook.sdk.ApplicationId" android:value="@string/facebookAppId" />
+    <activity android:name="com.facebook.FacebookActivity"
+          android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+          android:theme="@android:style/Theme.Translucent.NoTitleBar"
+          android:label="@string/appName" />
+    <activity
+        android:name="com.facebook.CustomTabActivity"
+        android:exported="true">
+      <intent-filter>
+        <action android:name="android.intent.action.VIEW" />
+        <category android:name="android.intent.category.DEFAULT" />
+        <category android:name="android.intent.category.BROWSABLE" />
+        <data android:scheme="@string/fbLoginProtocolScheme" />
+      </intent-filter>
+    </activity>
+    <!--End Facebook Auth-->
+  </application>
 </manifest>
