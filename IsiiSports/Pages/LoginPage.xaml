@@ -7,16 +7,16 @@
 	BackgroundColor="{StaticResource GreenPrimary}"
 	BindingContext="{x:Static d:DesignViewModelLocator.LoginViewModel}">
 
-	<Grid HorizontalOptions="Fill" Padding="24" VerticalOptions="Fill">
-		<Grid.RowDefinitions>
-			<RowDefinition Height="3*"/>
-			<RowDefinition Height="1*"/>
-			</Grid.RowDefinitions>
-		<StackLayout x:Name="ImageStack" Grid.Row="0" Padding="24,0" VerticalOptions="Center">
-			<Label FontSize="60" HorizontalOptions="Center" Text="ISII Sports" TextColor="White" VerticalOptions="Center"/>
-		</StackLayout>
-		<StackLayout x:Name="ButtonStack" Grid.Row="1" HorizontalOptions="CenterAndExpand" Spacing="30" VerticalOptions="Center">
-			<!--<controls:ImageButton x:Name="GoogleButton"
+  <Grid HorizontalOptions="Fill" Padding="24" VerticalOptions="Fill">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+    <StackLayout x:Name="ImageStack" Grid.Row="0" Padding="24,0" VerticalOptions="Center">
+      <Label FontSize="60" HorizontalOptions="Center" Text="ISII Sports" TextColor="White" VerticalOptions="Center"/>
+    </StackLayout>
+    <StackLayout x:Name="ButtonStack" Grid.Row="1" HorizontalOptions="CenterAndExpand" Spacing="30" VerticalOptions="Center">
+      <!--<controls:ImageButton x:Name="GoogleButton"
 				ButtonBackgroundColor="{StaticResource GreenLight}"
 				Command="{Binding LoginCommand}"
 				CommandParameter="Google"
@@ -32,7 +32,7 @@
 				Source="facebook"
 				Text="Login with Facebook"
 				WidthRequest="300"/>-->
-			<controls:SportButton Command="{Binding LoginCommand}"
+      <controls:SportButton Command="{Binding LoginCommand}"
 				CommandParameter="Google"
 				HorizontalOptions="CenterAndExpand"
 				Image="google"
@@ -40,7 +40,7 @@
 				Text="Login with Google"
 				WidthRequest="300"
 				HeightRequest="50"/>
-			<controls:SportButton Command="{Binding LoginCommand}"
+      <controls:SportButton Command="{Binding LoginCommand}"
 				CommandParameter="Facebook"
 				HorizontalOptions="CenterAndExpand"
 				Image="facebook"
@@ -48,7 +48,10 @@
 				Text="Login with Facebook"
 				WidthRequest="300"
 				HeightRequest="50">
-			</controls:SportButton>
-		</StackLayout>
-	</Grid>
+      </controls:SportButton>
+      <Button Text="Maybe later..."
+              BackgroundColor="Transparent"
+              Command="{Binding SkipLoginCommand}"/>
+    </StackLayout>
+  </Grid>
 </ContentPage>

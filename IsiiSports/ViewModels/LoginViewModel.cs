@@ -8,24 +8,32 @@ namespace IsiiSports.ViewModels
 {
     public class LoginViewModel : BaseViewModel
     {
-		#region Properties
+        #region Properties
 
-		public string UserName { get; set; }
-		public string Password { get; set; }
+        public string UserName { get; set; }
+        public string Password { get; set; }
 
-		#endregion
+        #endregion
 
-		#region Commands
+        #region Commands
 
-		private ICommand loginCommand;
-		public ICommand LoginCommand => loginCommand ?? (loginCommand = new Command<string>(async authProvider => await ExecuteLoginCommand(authProvider), authProvider => !IsBusy));
+        private ICommand loginCommand;
+        public ICommand LoginCommand => loginCommand ?? (loginCommand = new Command<string>(async authProvider => await ExecuteLoginCommand(authProvider), authProvider => !IsBusy));
 
-		#endregion
+        private ICommand skipLoginCommand;
 
-		#region Methods
+        public ICommand SkipLoginCommand => skipLoginCommand ?? (skipLoginCommand = new Command(ExecuteSkipLoginCommand));
+        private void ExecuteSkipLoginCommand()
+        {
+            CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.MainContainer);
+        }
 
-		private async Task ExecuteLoginCommand(string authProvider)
-		{
+        #endregion
+
+        #region Methods
+
+        private async Task ExecuteLoginCommand(string authProvider)
+        {
             var loggedIn = await AzureService.LoginAsync(authProvider);
             if (loggedIn)
             {
@@ -39,14 +47,14 @@ namespace IsiiSports.ViewModels
             }
         }
 
-		//private void SetUserSettings(UserLoggedDTO dto)
-		//{
-		//	Settings.IdUser = dto.IdUser;
-		//	Settings.UserName = UserName;
-		//	Settings.Password = Password;
-		//	Settings.UserFullName = dto.FirstName + " " + dto.LastName;
-		//}
+        //private void SetUserSettings(UserLoggedDTO dto)
+        //{
+        //	Settings.IdUser = dto.IdUser;
+        //	Settings.UserName = UserName;
+        //	Settings.Password = Password;
+        //	Settings.UserFullName = dto.FirstName + " " + dto.LastName;
+        //}
 
-		#endregion
-	}
+        #endregion
+    }
 }
