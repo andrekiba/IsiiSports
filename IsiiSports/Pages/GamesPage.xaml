@@ -1,12 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:d="clr-namespace:IsiiSports.Base;assembly=IsiiSports"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"          
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d" 
+             xmlns:base="clr-namespace:IsiiSports.Base;assembly=IsiiSports"
              xmlns:plugin="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
              xmlns:conv="clr-namespace:IsiiSports.Converters;assembly=IsiiSports"
              xmlns:fe="clr-namespace:FreshEssentials;assembly=FreshEssentials"
              x:Class="IsiiSports.Pages.GamesPage"
-             BindingContext="{x:Static d:DesignViewModelLocator.GamesViewModel}"
+             d:BindingContext="{x:Static base:DesignViewModelLocator.GamesViewModel}"
              BackgroundColor="#e6e6e6">
   
   <ContentPage.Resources>
@@ -17,11 +20,14 @@
   
   <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
     <!--<Label Text="Prova" TextColor="Black"></Label>-->
-    <ListView ItemsSource="{Binding GameList}" 
+     <ListView x:Name="GamesView"
+              ItemsSource="{Binding Games}" 
               HorizontalOptions="Fill" 
               VerticalOptions="Fill"
               fe:ListViewItemTappedAttached.Command="{Binding ItemTappedCommand}"
-              RowHeight="120">
+              RowHeight="120"
+              IsRefreshing="{Binding IsBusy, Mode=OneWay}"
+              RefreshCommand="{Binding LoadGamesCommand}">
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>

@@ -16,7 +16,9 @@ namespace IsiiSports.ViewModels
 
         public bool IsNotBusy => !IsBusy;
 
-		protected async Task DoAction(Func<Task> action)
+        public string LoadingMessage { get; set; }
+
+        protected async Task DoAction(Func<Task> action)
 		{
 			Exception exception = null;
 			try

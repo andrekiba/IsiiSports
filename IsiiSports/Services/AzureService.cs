@@ -125,7 +125,7 @@ namespace IsiiSports.Services
 
             var auth = DependencyService.Get<IAuthentication>();
 
-            if (string.IsNullOrEmpty(authProvider))
+            if (!string.IsNullOrEmpty(authProvider))
                 AuthProvider = (MobileServiceAuthenticationProvider)Enum.Parse(typeof(MobileServiceAuthenticationProvider), authProvider);
 
             var authUser = await auth.LoginAsync(Client, AuthProvider);

@@ -1,22 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-	xmlns:controls="clr-namespace:IsiiSports.Controls;assembly=IsiiSports"
-	xmlns:d="clr-namespace:IsiiSports.Base;assembly=IsiiSports"
-	xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-	x:Class="IsiiSports.Pages.LoginPage"
-	BackgroundColor="{StaticResource GreenPrimary}"
-	BindingContext="{x:Static d:DesignViewModelLocator.LoginViewModel}">
+	        xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            mc:Ignorable="d"
+            xmlns:base="clr-namespace:IsiiSports.Base;assembly=IsiiSports"
+            xmlns:controls="clr-namespace:IsiiSports.Controls;assembly=IsiiSports"
+	        x:Class="IsiiSports.Pages.LoginPage"
+	        BackgroundColor="{StaticResource GreenPrimary}"
+	        d:BindingContext="{x:Static base:DesignViewModelLocator.LoginViewModel}">
 
-  <Grid HorizontalOptions="Fill" Padding="24" VerticalOptions="Fill">
-    <Grid.RowDefinitions>
-      <RowDefinition Height="*"/>
-      <RowDefinition Height="Auto"/>
-    </Grid.RowDefinitions>
-    <StackLayout x:Name="ImageStack" Grid.Row="0" Padding="24,0" VerticalOptions="Center">
-      <Label FontSize="60" HorizontalOptions="Center" Text="ISII Sports" TextColor="White" VerticalOptions="Center"/>
-    </StackLayout>
-    <StackLayout x:Name="ButtonStack" Grid.Row="1" HorizontalOptions="CenterAndExpand" Spacing="30" VerticalOptions="Center">
-      <!--<controls:ImageButton x:Name="GoogleButton"
+    <Grid HorizontalOptions="Fill" Padding="24" VerticalOptions="Fill">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackLayout x:Name="ImageStack" Grid.Row="0" Padding="24,0" VerticalOptions="Center">
+            <Label FontSize="60" HorizontalOptions="Center" Text="ISII Sports" TextColor="White" VerticalOptions="Center"/>
+        </StackLayout>
+        <StackLayout x:Name="ButtonStack" Grid.Row="1" HorizontalOptions="CenterAndExpand" Spacing="30" VerticalOptions="Center">
+            <!--<controls:ImageButton x:Name="GoogleButton"
 				ButtonBackgroundColor="{StaticResource GreenLight}"
 				Command="{Binding LoginCommand}"
 				CommandParameter="Google"
@@ -32,7 +35,7 @@
 				Source="facebook"
 				Text="Login with Facebook"
 				WidthRequest="300"/>-->
-      <controls:SportButton Command="{Binding LoginCommand}"
+            <controls:SportButton Command="{Binding LoginCommand}"
 				CommandParameter="Google"
 				HorizontalOptions="CenterAndExpand"
 				Image="google"
@@ -40,7 +43,7 @@
 				Text="Login with Google"
 				WidthRequest="300"
 				HeightRequest="50"/>
-      <controls:SportButton Command="{Binding LoginCommand}"
+            <controls:SportButton Command="{Binding LoginCommand}"
 				CommandParameter="Facebook"
 				HorizontalOptions="CenterAndExpand"
 				Image="facebook"
@@ -48,10 +51,10 @@
 				Text="Login with Facebook"
 				WidthRequest="300"
 				HeightRequest="50">
-      </controls:SportButton>
-      <Button Text="Maybe later..."
+            </controls:SportButton>
+            <Button Text="Maybe later..."
               BackgroundColor="Transparent"
               Command="{Binding SkipLoginCommand}"/>
-    </StackLayout>
-  </Grid>
+        </StackLayout>
+    </Grid>
 </ContentPage>
