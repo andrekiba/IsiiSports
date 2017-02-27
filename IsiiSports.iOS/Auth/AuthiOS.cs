@@ -122,7 +122,7 @@ namespace IsiiSports.iOS.Auth
         {
             var facebookLoginTcs = new TaskCompletionSource<AccessToken>();
             var loginManager = new LoginManager();
-			loginManager.LoginBehavior = LoginBehavior.SystemAccount;
+			loginManager.LoginBehavior = LoginBehavior.Native;
 			loginManager.LogInWithReadPermissions(new[] { "public_profile" }, GetController(),
                 (loginResult, error) =>
                 {
