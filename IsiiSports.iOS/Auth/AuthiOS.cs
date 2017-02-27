@@ -4,67 +4,85 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Facebook.CoreKit;
 using Facebook.LoginKit;
-using Foundation;
 using Google.SignIn;
 using IsiiSports.Auth;
 using IsiiSports.iOS.Auth;
 using Microsoft.WindowsAzure.MobileServices;
+using Newtonsoft.Json.Linq;
 using Xamarin.Forms;
 using Settings = IsiiSports.Helpers.Settings;
 
 [assembly: Dependency(typeof(AuthiOS))]
 namespace IsiiSports.iOS.Auth
 {
-	public class AuthiOS : IAuthentication, ISignInUIDelegate//, ISignInDelegate
+	public class AuthiOS : IAuthentication, ISignInUIDelegate
     {
 		public async Task<AuthUser> LoginAsync(IMobileServiceClient client, string provider, IDictionary<string, string> parameters = null)
         {
             try
             {
                 var authProvider = (MobileServiceAuthenticationProvider)Enum.Parse(typeof(MobileServiceAuthenticationProvider), Settings.AuthProvider);
-
 				var authUser = new AuthUser();
-                string accessToken = null;
+
+                #region Client Flow
+
+                JObject jToken = null;
 
                 if (authProvider == MobileServiceAuthenticationProvider.Facebook)
                 {
                     var facebookToken = await LoginFacebookAsync();
-                    accessToken = facebookToken.TokenString;
                     authUser.FacebookUser = new FacebookUser
                     {
                         UserId = facebookToken.UserID,
                         AccessToken = facebookToken.TokenString
-                    };                    
+                    };
+
+                    jToken = JObject.FromObject(new
+                    {
+                        access_token = facebookToken.TokenString,
+                        //authorization_code = googleUser.ServerAuthCode,
+                        //id_token = googleUser.Authentication.IdToken,
+                    });
                 }
 
                 if (authProvider == MobileServiceAuthenticationProvider.Google)
                 {
                     var googleUser = await LoginGoogleAsync();
-                    accessToken = googleUser.Authentication.AccessToken;
 
                     authUser.GoogleUser = new IsiiSports.Auth.GoogleUser
                     {
                         UserId = googleUser.UserID,
-                        AccessToken = accessToken,
+                        AccessToken = googleUser.Authentication.AccessToken,
                         IdToken = googleUser.Authentication.IdToken,
+                        ServerAuthCode = googleUser.ServerAuthCode,
                         Email = googleUser.Profile.Email,
                         UserName = googleUser.Profile.Name,
                         ProfileImageUrl = googleUser.Profile.HasImage ? googleUser.Profile.GetImageUrl(100).AbsoluteString : null
                     };
-                    
+
+                    jToken = JObject.FromObject(new {
+                        access_token = googleUser.Authentication.AccessToken,
+                        authorization_code = googleUser.ServerAuthCode,
+                        id_token = googleUser.Authentication.IdToken
+                    });
                 }
 
-                var zumoPayload = new Dictionary<string, string> {{"access_token", accessToken}};
+                authUser.MobileServiceUser = await client.LoginAsync(authProvider, jToken);
+                
+                #endregion
 
-                authUser.MobileServiceUser = await client.LoginAsync(GetController(), authProvider, zumoPayload);
-				//authUser.MobileServiceUser = await client.LoginAsync(GetController(), provider, null);
+                #region Server Flow
+
+                //authUser.MobileServiceUser = await client.LoginAsync(GetController(), authProvider, null);
+
+                #endregion
 
                 return authUser;
 
             }
-            catch (Exception e)
+            catch (Exception ex)
             {
-                e.Data["method"] = "LoginAsync";
+                
             }
 
             return null;
@@ -121,9 +139,11 @@ namespace IsiiSports.iOS.Auth
         public async Task<AccessToken> LoginFacebookAsync()
         {
             var facebookLoginTcs = new TaskCompletionSource<AccessToken>();
-            var loginManager = new LoginManager();
-			loginManager.LoginBehavior = LoginBehavior.Native;
-			loginManager.LogInWithReadPermissions(new[] { "public_profile" }, GetController(),
+            var loginManager = new LoginManager
+            {
+                LoginBehavior = LoginBehavior.SystemAccount
+            };
+            loginManager.LogInWithReadPermissions(new[] { "public_profile" }, GetController(),
                 (loginResult, error) =>
                 {
                     if (loginResult.Token != null)
@@ -175,15 +195,7 @@ namespace IsiiSports.iOS.Auth
 			SignIn.SharedInstance.Dispose();
 		}
 
-		public IntPtr Handle
-		{
-			get { return GetController().Handle; }
-		}
-
-		//public void DidSignIn(SignIn signIn, Google.SignIn.GoogleUser user, NSError error)
-		//{
-		//	Console.WriteLine(user.ToString());
-		//}
+		public IntPtr Handle => GetController().Handle;
 
 		#endregion
 	}

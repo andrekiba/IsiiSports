@@ -1,7 +1,8 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 using System.Windows.Input;
+using Acr.UserDialogs;
 using IsiiSports.Base;
-using IsiiSports.Interfaces;
 using Xamarin.Forms;
 
 namespace IsiiSports.ViewModels
@@ -18,42 +19,49 @@ namespace IsiiSports.ViewModels
         #region Commands
 
         private ICommand loginCommand;
-        public ICommand LoginCommand => loginCommand ?? (loginCommand = new Command<string>(async authProvider => await ExecuteLoginCommand(authProvider), authProvider => !IsBusy));
+        public ICommand LoginCommand => loginCommand ?? (loginCommand = new Command<string>(async authProvider => await ExecuteLoginCommand(authProvider), authProvider => IsNotBusy));
 
         private ICommand skipLoginCommand;
+        public ICommand SkipLoginCommand => skipLoginCommand ?? (skipLoginCommand = new Command(ExecuteSkipLoginCommand, () => IsNotBusy));
 
-        public ICommand SkipLoginCommand => skipLoginCommand ?? (skipLoginCommand = new Command(ExecuteSkipLoginCommand));
+        #endregion
+
+        #region Methods
         private void ExecuteSkipLoginCommand()
         {
             CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.MainContainer);
         }
 
-        #endregion
-
-        #region Methods
-
         private async Task ExecuteLoginCommand(string authProvider)
         {
-            var loggedIn = await AzureService.LoginAsync(authProvider);
-            if (loggedIn)
+            try
             {
-                //SetUserSettings(result);
+                if (IsBusy)
+                    return;
 
-                CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.MainContainer);
+                IsBusy = true;
+
+                UserDialogs.Instance.ShowLoading("Logging in...");
+
+                var loggedIn = await AzureService.LoginAsync(authProvider);
+
+                UserDialogs.Instance.HideLoading();
+
+                if (loggedIn)
+                    CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.MainContainer);
+                else
+                    //await CoreMethods.DisplayAlert("Error", "Errore durante il login...", "OK");
+                    await UserDialogs.Instance.AlertAsync("Error", "Errore durante il login...", "OK");
             }
-            else
+            catch (Exception)
             {
-                await CoreMethods.DisplayAlert("Errore durante il login...", "Error", "OK");
+                await UserDialogs.Instance.AlertAsync("Error", "Errore durante il login...", "OK");
             }
+            finally
+            {
+                IsBusy = false;
+            }            
         }
-
-        //private void SetUserSettings(UserLoggedDTO dto)
-        //{
-        //	Settings.IdUser = dto.IdUser;
-        //	Settings.UserName = UserName;
-        //	Settings.Password = Password;
-        //	Settings.UserFullName = dto.FirstName + " " + dto.LastName;
-        //}
 
         #endregion
     }

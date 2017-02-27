@@ -1,4 +1,6 @@
-﻿using Acr.UserDialogs;
+﻿using System.Linq;
+using Acr.UserDialogs;
+using BottomBar.XamarinForms;
 using FreshMvvm;
 using IsiiSports.Base;
 using IsiiSports.Interfaces;
@@ -26,6 +28,9 @@ namespace IsiiSports
 			var mainContainer = new BottomBarTabbedNavigationContainer(NavigationContainerNames.MainContainer);
 			mainContainer.AddTab<GamesViewModel>("Games", Device.OnPlatform("", "", ""));
 			mainContainer.AddTab<TeamsViewModel>("Teams", Device.OnPlatform("", "", ""));
+
+		    //var first = (BottomBarPage) mainContainer.TabbedPages.First();
+		    //var second = (BottomBarPage) mainContainer.TabbedPages.Last();
 
 			MainPage = loginContainer;
 		}

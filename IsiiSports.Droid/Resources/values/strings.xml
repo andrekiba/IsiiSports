@@ -3,4 +3,6 @@
   <string name="appName">Isii Sports</string>
   <string name="facebookAppId">157854894725705</string>
   <string name="fbLoginProtocolScheme">fb157854894725705</string>
+  <string name="clientId">710855082545-u3i416lbip0foddlt6o3h0skg57nm5um.apps.googleusercontent.com</string> <!--Android-->
+  <string name="serverClientId">710855082545-op5obqhedlvofslrvpcnuh876ap81b58.apps.googleusercontent.com</string> <!--WebApp-->
 </resources> 

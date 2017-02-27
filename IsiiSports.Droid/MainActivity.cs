@@ -10,6 +10,7 @@ using Microsoft.Azure.Mobile;
 using Microsoft.Azure.Mobile.Analytics;
 using Microsoft.Azure.Mobile.Crashes;
 using Acr.UserDialogs;
+using Android.Content;
 using Android.Gms.Auth.Api.SignIn;
 using Android.Gms.Common;
 using Android.Gms.Common.Apis;
@@ -38,10 +39,16 @@ namespace IsiiSports.Droid
 
             #region Google Auth           
 
-			var options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DefaultSignIn)
-			    //.RequestScopes(new Scope(Scopes.Profile))
-			    .RequestScopes(new Scope(Scopes.PlusLogin))
-		        //.RequestProfile()
+            var serverClientId = Resources.GetString(Resource.String.serverClientId);
+            //var clientId = Resources.GetString(Resource.String.clientId);
+
+            var options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DefaultSignIn)
+                .RequestScopes(new Scope(Scopes.PlusLogin))
+                //.RequestScopes(new Scope(Scopes.Profile))
+                //.RequestProfile()
+                //.RequestId()
+                .RequestIdToken(serverClientId)
+                .RequestServerAuthCode(serverClientId)
                 .RequestEmail()
                 .Build();
 
@@ -50,7 +57,7 @@ namespace IsiiSports.Droid
                 //.AddOnConnectionFailedListener(this)
 				//.EnableAutoManage(this, this)
 				.AddApi(Android.Gms.Auth.Api.Auth.GOOGLE_SIGN_IN_API, options)
-				.AddApi(PlusClass.API)
+				//.AddApi(PlusClass.API)
                 .Build();           
             
             #endregion
@@ -82,6 +89,19 @@ namespace IsiiSports.Droid
         public override void OnRequestPermissionsResult(int requestCode, string[] permissions, Permission[] grantResults)
         {
             PermissionsImplementation.Current.OnRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+
+        protected override void OnActivityResult(int requestCode, Result resultCode, Intent data)
+        {
+            base.OnActivityResult(requestCode, resultCode, data);
+
+            //gestisco il risultato del tentativo di login con google 
+            if (requestCode == SharedGoogleApiClient.GoogleSignInCode)
+            {
+                var result = Android.Gms.Auth.Api.Auth.GoogleSignInApi.GetSignInResultFromIntent(data);
+                //MessagingCenter.Send(this, "GoogleSignInResult", result);
+                SharedGoogleApiClient.Instance.OnConnectionResult(result);
+            }          
         }
 
         #region IConnectionCallbacks, IOnConnectionFailedListener

@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading.Tasks;
+using Android.Content;
 using Android.Gms.Auth;
+using Android.Gms.Auth.Api.SignIn;
 using Android.Gms.Common;
 using Android.Gms.Common.Apis;
 using Android.Gms.Plus;
@@ -15,6 +17,7 @@ using IsiiSports.Helpers;
 using Microsoft.WindowsAzure.MobileServices;
 using ModernHttpClient;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Plugin.CurrentActivity;
 using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
@@ -29,37 +32,57 @@ namespace IsiiSports.Droid.Auth
         public async Task<AuthUser> LoginAsync(IMobileServiceClient client, string provider, IDictionary<string, string> parameters = null)
         {
             try
-            {
+            { 
                 var authProvider = (MobileServiceAuthenticationProvider)Enum.Parse(typeof(MobileServiceAuthenticationProvider), Settings.AuthProvider);
-
 				var authUser = new AuthUser();
-                string accessToken = null;
+
+                #region Client Flow
+
+                JObject jToken = null;
+                
 
                 if (authProvider == MobileServiceAuthenticationProvider.Facebook)
                 {
                     var facebookUser = await LoginFacebookAsync();
-                    accessToken = facebookUser.AccessToken;
                     authUser.FacebookUser = facebookUser;
+
+                    jToken = JObject.FromObject(new
+                    {
+                        access_token = facebookUser.AccessToken,
+                        //authorization_code = googleUser.ServerAuthCode,
+                        //id_token = googleUser.Authentication.IdToken,
+                    });
                 }
 
                 if (authProvider == MobileServiceAuthenticationProvider.Google)
                 {
                     var googleUser = await LoginGoogleAsync();
-                    accessToken = googleUser.AccessToken;
                     authUser.GoogleUser = googleUser;
+
+                    jToken = JObject.FromObject(new
+                    {
+                        access_token = googleUser.AccessToken,
+                        authorization_code = googleUser.ServerAuthCode,
+                        id_token = googleUser.IdToken
+                    });
                 }
+               
+                authUser.MobileServiceUser = await client.LoginAsync(authProvider, jToken);
 
-                var zumoPayload = new Dictionary<string, string> {{"access_token", accessToken}};
+                #endregion
 
-                authUser.MobileServiceUser = await client.LoginAsync(Forms.Context, authProvider, zumoPayload);
+                #region Server Flow
+
+                //authUser.MobileServiceUser = await client.LoginAsync(Forms.Context, authProvider, null);
+
+                #endregion
 
                 return authUser;
 
             }
             catch (Exception ex)
             {
-                //Insights.Report(ex, Insights.Severity.Error);
-
+                
             }
 
             return null;
@@ -218,7 +241,7 @@ namespace IsiiSports.Droid.Auth
 			var firstTry = true;
 
             var googleCallback = new GoogleCallback
-            {
+            { 
                 HandleConnected = async connected =>
                 {
                     if (connected)
@@ -231,7 +254,7 @@ namespace IsiiSports.Droid.Auth
                         var userId = GoogleAuthUtil.GetAccountId(context, accountName);
                         var person = PlusClass.PeopleApi.GetCurrentPerson(SharedGoogleApiClient.Instance.GoogleApiClient);
 
-						//GoogleAuthUtil.
+                        //Android.Gms.Auth.Api.Auth.GoogleSignInApi.GetSignInResultFromIntent()
 
                         var googleUser = new GoogleUser
                         {
@@ -279,9 +302,36 @@ namespace IsiiSports.Droid.Auth
                 }
             };
 
-            SharedGoogleApiClient.Instance.GoogleApiClient.RegisterConnectionCallbacks(googleCallback);
-            SharedGoogleApiClient.Instance.GoogleApiClient.RegisterConnectionFailedListener(googleCallback);
-			SharedGoogleApiClient.Instance.GoogleApiClient.Connect(GoogleApiClient.SignInModeOptional);
+            //SharedGoogleApiClient.Instance.GoogleApiClient.RegisterConnectionCallbacks(googleCallback);
+            //SharedGoogleApiClient.Instance.GoogleApiClient.RegisterConnectionFailedListener(googleCallback);
+			//SharedGoogleApiClient.Instance.GoogleApiClient.Connect(GoogleApiClient.SignInModeOptional);
+
+            SharedGoogleApiClient.Instance.HandleConnectionResult = result =>
+            {
+                if (result.IsSuccess)
+                {
+                    var account = result.SignInAccount;
+                    
+                    var googleUser = new GoogleUser
+                    {
+                        UserId = account.Id,
+                        AccessToken = account.ServerAuthCode,
+                        IdToken = account.IdToken,
+                        Email = account.Email,
+                        UserName = account.DisplayName,
+                        ProfileImageUrl = account.PhotoUrl.Path
+                    };
+
+                    googleLoginTcs.TrySetResult(googleUser);
+                }
+                else
+                {
+                    googleLoginTcs.TrySetException(new Exception("Google Client Flow Login Failed"));
+                }
+            }; 
+
+            var signInIntent = Android.Gms.Auth.Api.Auth.GoogleSignInApi.GetSignInIntent(SharedGoogleApiClient.Instance.GoogleApiClient);
+            CrossCurrentActivity.Current.Activity.StartActivityForResult(signInIntent, SharedGoogleApiClient.GoogleSignInCode);
 
             return await googleLoginTcs.Task;
         }

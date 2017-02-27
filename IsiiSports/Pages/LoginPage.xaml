@@ -39,7 +39,7 @@
 				CommandParameter="Google"
 				HorizontalOptions="CenterAndExpand"
 				Image="google"
-				IsVisible="{Binding IsNotBusy}"
+				IsEnabled="{Binding IsNotBusy}"
 				Text="Login with Google"
 				WidthRequest="300"
 				HeightRequest="50"/>
@@ -47,7 +47,7 @@
 				CommandParameter="Facebook"
 				HorizontalOptions="CenterAndExpand"
 				Image="facebook"
-				IsVisible="{Binding IsNotBusy}"
+				IsEnabled="{Binding IsNotBusy}"
 				Text="Login with Facebook"
 				WidthRequest="300"
 				HeightRequest="50">

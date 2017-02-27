@@ -27,7 +27,7 @@ namespace IsiiSports.ViewModels
             base.ViewIsAppearing(sender, e);
 
             if (!Games.Any())
-                LoadGamesCommand.Execute(null);
+                LoadGamesCommand.Execute(true);
         }
 
         #endregion
@@ -54,7 +54,7 @@ namespace IsiiSports.ViewModels
                 var games = await AzureService.GameStore.GetItemsAsync(forceRefresh);
                 Games.ReplaceRange(games);
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 await CoreMethods.DisplayAlert("Sync Error", "Unable to sync Games, you may be offline", "OK");
             }
