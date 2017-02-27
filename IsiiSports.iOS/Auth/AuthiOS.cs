@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Threading.Tasks;
 using Facebook.CoreKit;
 using Facebook.LoginKit;
+using Foundation;
 using Google.SignIn;
 using IsiiSports.Auth;
 using IsiiSports.iOS.Auth;
@@ -14,16 +15,18 @@ using Settings = IsiiSports.Helpers.Settings;
 [assembly: Dependency(typeof(AuthiOS))]
 namespace IsiiSports.iOS.Auth
 {
-    public class AuthiOS : IAuthentication
+	public class AuthiOS : IAuthentication, ISignInUIDelegate//, ISignInDelegate
     {
-        public async Task<AuthUser> LoginAsync(IMobileServiceClient client, MobileServiceAuthenticationProvider provider, IDictionary<string, string> parameters = null)
+		public async Task<AuthUser> LoginAsync(IMobileServiceClient client, string provider, IDictionary<string, string> parameters = null)
         {
             try
             {
-                var authUser = new AuthUser();
+                var authProvider = (MobileServiceAuthenticationProvider)Enum.Parse(typeof(MobileServiceAuthenticationProvider), Settings.AuthProvider);
+
+				var authUser = new AuthUser();
                 string accessToken = null;
 
-                if (provider == MobileServiceAuthenticationProvider.Facebook)
+                if (authProvider == MobileServiceAuthenticationProvider.Facebook)
                 {
                     var facebookToken = await LoginFacebookAsync();
                     accessToken = facebookToken.TokenString;
@@ -34,7 +37,7 @@ namespace IsiiSports.iOS.Auth
                     };                    
                 }
 
-                if (provider == MobileServiceAuthenticationProvider.Google)
+                if (authProvider == MobileServiceAuthenticationProvider.Google)
                 {
                     var googleUser = await LoginGoogleAsync();
                     accessToken = googleUser.Authentication.AccessToken;
@@ -53,7 +56,8 @@ namespace IsiiSports.iOS.Auth
 
                 var zumoPayload = new Dictionary<string, string> {{"access_token", accessToken}};
 
-                authUser.MobileServiceUser = await client.LoginAsync(GetController(), provider, zumoPayload);
+                authUser.MobileServiceUser = await client.LoginAsync(GetController(), authProvider, zumoPayload);
+				//authUser.MobileServiceUser = await client.LoginAsync(GetController(), provider, null);
 
                 return authUser;
 
@@ -118,8 +122,8 @@ namespace IsiiSports.iOS.Auth
         {
             var facebookLoginTcs = new TaskCompletionSource<AccessToken>();
             var loginManager = new LoginManager();
-
-            loginManager.LogInWithReadPermissions(new[] { "public_profile" }, GetController(),
+			loginManager.LoginBehavior = LoginBehavior.SystemAccount;
+			loginManager.LogInWithReadPermissions(new[] { "public_profile" }, GetController(),
                 (loginResult, error) =>
                 {
                     if (loginResult.Token != null)
@@ -141,7 +145,8 @@ namespace IsiiSports.iOS.Auth
         {
             var googleLoginTcs = new TaskCompletionSource<Google.SignIn.GoogleUser>();
 
-            //SignIn.SharedInstance.UIDelegate = this;
+            //SignIn.SharedInstance.Delegate = this;
+			SignIn.SharedInstance.UIDelegate = this;
 
             SignIn.SharedInstance.SignedIn += (sender, e) => {
 
@@ -159,11 +164,27 @@ namespace IsiiSports.iOS.Auth
 
             };
 
-            SignIn.SharedInstance.SignInUserSilently();
+			//SignIn.SharedInstance.SignInUserSilently();
+			SignIn.SharedInstance.SignInUser();
 
             return await googleLoginTcs.Task;
         }
 
-        #endregion
-    }
+		public void Dispose()
+		{
+			SignIn.SharedInstance.Dispose();
+		}
+
+		public IntPtr Handle
+		{
+			get { return GetController().Handle; }
+		}
+
+		//public void DidSignIn(SignIn signIn, Google.SignIn.GoogleUser user, NSError error)
+		//{
+		//	Console.WriteLine(user.ToString());
+		//}
+
+		#endregion
+	}
 }

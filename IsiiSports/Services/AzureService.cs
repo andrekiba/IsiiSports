@@ -117,7 +117,6 @@ namespace IsiiSports.Services
             return Task.FromResult(true);
         }
 
-
         #region Login
         public async Task<bool> LoginAsync(string authProvider = null)
         {
@@ -125,20 +124,22 @@ namespace IsiiSports.Services
 
             var auth = DependencyService.Get<IAuthentication>();
 
-            if (!string.IsNullOrEmpty(authProvider))
-                AuthProvider = (MobileServiceAuthenticationProvider)Enum.Parse(typeof(MobileServiceAuthenticationProvider), authProvider);
+			if (!string.IsNullOrEmpty(authProvider)) 
+			{
+				Settings.AuthProvider = authProvider;
+			}
 
-            var authUser = await auth.LoginAsync(Client, AuthProvider);
+			var authUser = await auth.LoginAsync(Client, Settings.AuthProvider);
 
             if (authUser != null)
             {
-                Settings.AuthProvider = authProvider;
                 Settings.AzureAuthToken = authUser.MobileServiceUser.MobileServiceAuthenticationToken;
                 Settings.AzureUserId = authUser.MobileServiceUser.UserId;
                 return true;
             }
 
-            Settings.AzureAuthToken = string.Empty;
+			Settings.AuthProvider = null;
+			Settings.AzureAuthToken = string.Empty;
             Settings.AzureUserId = string.Empty;
 
             return false;

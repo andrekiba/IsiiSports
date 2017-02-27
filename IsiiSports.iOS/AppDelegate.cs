@@ -14,17 +14,17 @@ namespace IsiiSports.iOS
     // User Interface of the application, as well as listening (and optionally responding) to 
     // application events from iOS.
     [Register("AppDelegate")]
-    public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
+	public partial class AppDelegate : global::Xamarin.Forms.Platform.iOS.FormsApplicationDelegate
     {
-        //
-        // This method is invoked when the application has loaded and is ready to run. In this 
-        // method you should instantiate the window, load the UI into it and then make the window
-        // visible.
-        //
-        // You have 17 seconds to return from this method, or iOS will terminate your application.
-        //
+		//
+		// This method is invoked when the application has loaded and is ready to run. In this 
+		// method you should instantiate the window, load the UI into it and then make the window
+		// visible.
+		//
+		// You have 17 seconds to return from this method, or iOS will terminate your application.
+		//
 
-        public override bool FinishedLaunching(UIApplication app, NSDictionary options)
+		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
         {
             #region Google Auth
 
@@ -39,10 +39,16 @@ namespace IsiiSports.iOS
                 SignIn.SharedInstance.ClientID = clientId;
             }
 
+			// define useragent android like
+			string userAgent = "Mozilla/5.0 (Linux; Android 5.1.1; Nexus 5 Build/LMY48B; wv) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/43.0.2357.65 Mobile Safari/537.36";
+			var dictionary = NSDictionary.FromObjectAndKey(FromObject(userAgent), FromObject("UserAgent"));
+			NSUserDefaults.StandardUserDefaults.RegisterDefaults(dictionary);
+
             #endregion
 
             #region Facebook Auth
 
+			Profile.EnableUpdatesOnAccessTokenChange(true);
             Facebook.CoreKit.Settings.AppID = "157854894725705"; //Facebook AppId
             Facebook.CoreKit.Settings.DisplayName = "Isii Sports";
 

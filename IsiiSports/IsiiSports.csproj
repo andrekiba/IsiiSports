@@ -94,6 +94,7 @@
     <Compile Include="Interfaces\IPlayerStore.cs" />
     <Compile Include="Interfaces\ITeamStore.cs" />
     <Compile Include="Base\DesignViewModelLocator.cs" />
+    <Compile Include="Base\ListViewItemTappedAttached.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainPage.xaml">

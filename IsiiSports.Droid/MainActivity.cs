@@ -16,6 +16,7 @@ using Android.Gms.Common.Apis;
 using Android.Gms.Plus;
 using IsiiSports.Droid.Base;
 using Xamarin.Facebook;
+using Xamarin.Forms;
 
 namespace IsiiSports.Droid
 {
@@ -35,19 +36,21 @@ namespace IsiiSports.Droid
 
             #endregion
 
-            #region Google Auth
+            #region Google Auth           
 
-            
-
-            var options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DefaultSignIn)
+			var options = new GoogleSignInOptions.Builder(GoogleSignInOptions.DefaultSignIn)
+			    //.RequestScopes(new Scope(Scopes.Profile))
+			    .RequestScopes(new Scope(Scopes.PlusLogin))
+		        //.RequestProfile()
                 .RequestEmail()
                 .Build();
 
             SharedGoogleApiClient.Instance.GoogleApiClient = new GoogleApiClient.Builder(this)
                 //.AddConnectionCallbacks(this)
-                //.AddOnConnectionFailedListener(this)              
-                .AddApi(PlusClass.API) 
-                .AddScope(new Scope(Scopes.Profile))
+                //.AddOnConnectionFailedListener(this)
+				//.EnableAutoManage(this, this)
+				.AddApi(Android.Gms.Auth.Api.Auth.GOOGLE_SIGN_IN_API, options)
+				.AddApi(PlusClass.API)
                 .Build();           
             
             #endregion
@@ -83,20 +86,20 @@ namespace IsiiSports.Droid
 
         #region IConnectionCallbacks, IOnConnectionFailedListener
 
-        public void OnConnected(Bundle connectionHint)
-        {
-            throw new System.NotImplementedException();
-        }
+        //public void OnConnected(Bundle connectionHint)
+        //{
+            
+        //}
 
-        public void OnConnectionSuspended(int cause)
-        {
-            throw new System.NotImplementedException();
-        }
+        //public void OnConnectionSuspended(int cause)
+        //{
+            
+        //}
 
-        public void OnConnectionFailed(ConnectionResult result)
-        {
-            throw new System.NotImplementedException();
-        }
+        //public void OnConnectionFailed(ConnectionResult result)
+        //{
+            
+        //}
 
         #endregion
     }

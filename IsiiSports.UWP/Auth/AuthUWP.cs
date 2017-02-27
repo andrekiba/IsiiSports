@@ -13,7 +13,7 @@ namespace IsiiSports.UWP.Auth
 {
     public class AuthUWP : IAuthentication
     {
-        public async Task<AuthUser> LoginAsync(IMobileServiceClient client, MobileServiceAuthenticationProvider provider, IDictionary<string, string> parameters = null)
+        public async Task<AuthUser> LoginAsync(IMobileServiceClient client, string provider, IDictionary<string, string> parameters = null)
         {
             try
             {

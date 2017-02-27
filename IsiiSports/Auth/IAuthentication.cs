@@ -6,7 +6,7 @@ namespace IsiiSports.Auth
 {
     public interface IAuthentication
     {
-        Task<AuthUser> LoginAsync(IMobileServiceClient client, MobileServiceAuthenticationProvider provider, IDictionary<string, string> paramameters = null);
+        Task<AuthUser> LoginAsync(IMobileServiceClient client, string provider, IDictionary<string, string> paramameters = null);
         Task<bool> RefreshUser(IMobileServiceClient client);
         void ClearCookies();
     }
