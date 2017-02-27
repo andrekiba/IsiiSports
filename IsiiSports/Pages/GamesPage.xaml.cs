@@ -7,15 +7,15 @@ namespace IsiiSports.Pages
         public GamesPage()
         {
             InitializeComponent();
-            GamesView.ItemTapped += (sender, e) =>
+            GamesList.ItemTapped += (sender, e) =>
             {
                 if (Device.OS == TargetPlatform.iOS || Device.OS == TargetPlatform.Android)
-                    GamesView.SelectedItem = null;
+                    GamesList.SelectedItem = null;
             };
 
-            GamesView.ItemSelected += (sender, e) =>
+            GamesList.ItemSelected += (sender, e) =>
             {
-                GamesView.SelectedItem = null;
+                GamesList.SelectedItem = null;
             };
         }
     }

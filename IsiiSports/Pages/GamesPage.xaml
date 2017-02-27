@@ -1,27 +1,27 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
-             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"          
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-             mc:Ignorable="d" 
+             mc:Ignorable="d"
              xmlns:base="clr-namespace:IsiiSports.Base;assembly=IsiiSports"
              xmlns:plugin="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
              xmlns:conv="clr-namespace:IsiiSports.Converters;assembly=IsiiSports"
              x:Class="IsiiSports.Pages.GamesPage"
              d:BindingContext="{x:Static base:DesignViewModelLocator.GamesViewModel}"
              BackgroundColor="#e6e6e6">
-  
+
   <ContentPage.Resources>
     <ResourceDictionary>
       <conv:NameToInitialsConverter x:Key="NameToInitialsConverter" />
     </ResourceDictionary>
   </ContentPage.Resources>
-  
+
   <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
     <!--<Label Text="Prova" TextColor="Black"></Label>-->
-     <ListView x:Name="GamesView"
-              ItemsSource="{Binding Games}" 
-              HorizontalOptions="Fill" 
+    <ListView x:Name="GamesList"
+              ItemsSource="{Binding Games}"
+              HorizontalOptions="Fill"
               VerticalOptions="Fill"
               base:ListViewItemTappedAttached.Command="{Binding ItemTappedCommand}"
               RowHeight="120"
@@ -45,10 +45,10 @@
                   </Grid.RowDefinitions>
                   <StackLayout Grid.Row="0" Orientation="Horizontal">
                     <Grid Margin="8,4,4,4">
-                      <plugin:CircleImage WidthRequest="25" 
-                                          HeightRequest="25" 
-                                          VerticalOptions="Center" 
-                                          HorizontalOptions="Center" 
+                      <plugin:CircleImage WidthRequest="25"
+                                          HeightRequest="25"
+                                          VerticalOptions="Center"
+                                          HorizontalOptions="Center"
                                           FillColor="#27ae60"/>
                       <Label Text="{Binding Team1.Name, Converter={StaticResource NameToInitialsConverter}}"
                              VerticalTextAlignment="Center"
@@ -82,7 +82,7 @@
                            FontSize="16"/>
                   </StackLayout>
                 </Grid>
-                <Grid Grid.Column="1" 
+                <Grid Grid.Column="1"
                       BackgroundColor="#e6e6e6"
                       HorizontalOptions="FillAndExpand"
                       VerticalOptions="FillAndExpand"
@@ -95,25 +95,25 @@
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="2*"/>
                   </Grid.RowDefinitions>
-                  <Label Text="{Binding GameDate, StringFormat=\{0:m\}}" 
-                         TextColor="#2c3e50" 
-                         Grid.Row="0" 
+                  <Label Text="{Binding GameDate, StringFormat=\{0:m\}}"
+                         TextColor="#2c3e50"
+                         Grid.Row="0"
                          FontSize="14"
-                         VerticalOptions="Center" 
-                         HorizontalTextAlignment="Center" 
-                         FontAttributes="Bold"/>
-                  <Label Text="{Binding GameDate, StringFormat=\{0:t\}}" 
-                         TextColor="#2c3e50" 
-                         Grid.Row="1" 
-                         FontSize="14"
-                         VerticalOptions="Center" 
+                         VerticalOptions="Center"
                          HorizontalTextAlignment="Center"
                          FontAttributes="Bold"/>
-                  <Label Text="{Binding GameField.Name}" 
-                         TextColor="#2c3e50" 
+                  <Label Text="{Binding GameDate, StringFormat=\{0:t\}}"
+                         TextColor="#2c3e50"
+                         Grid.Row="1"
+                         FontSize="14"
+                         VerticalOptions="Center"
+                         HorizontalTextAlignment="Center"
+                         FontAttributes="Bold"/>
+                  <Label Text="{Binding GameField.Name}"
+                         TextColor="#2c3e50"
                          FontSize="13"
                          Grid.Row="2"
-                         VerticalOptions="Center" 
+                         VerticalOptions="Center"
                          HorizontalTextAlignment="Center"/>
                 </Grid>
               </Grid>
