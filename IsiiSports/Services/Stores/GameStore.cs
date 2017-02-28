@@ -14,6 +14,7 @@ namespace IsiiSports.Services.Stores
 
         public override Task<IEnumerable<Game>> GetItemsAsync(bool forceRefresh = false)
         {
+            var description = "Questa è una prova di una descrizione di una partita aggiunta all'app ISII Sports";
             var t1 = new Team { Name = "Informatici" };
             var t2 = new Team { Name = "Meccanici" };
             var t3 = new Team { Name = "Professori Isii" };
@@ -23,18 +24,18 @@ namespace IsiiSports.Services.Stores
 
             var list = new List<Game>()
             {
-                new Game {Team1 = t1, Team2 = t2, GameDate = new DateTime(2017,2,20,16,30,0), GameField = g1 },
-                new Game {Team1 = t2, Team2 = t1, GameDate = new DateTime(2017,2,25,17,0,0), GameField = g2},
-                new Game {Team1 = t3, Team2 = t4, GameDate = new DateTime(2017,2,20,16,30,0), GameField = g1 },
-                new Game {Team1 = t2, Team2 = t1, GameDate = new DateTime(2017,2,25,17,0,0), GameField = g2},
-                new Game {Team1 = t1, Team2 = t2, GameDate = new DateTime(2017,2,20,16,30,0), GameField = g1 },
-                new Game {Team1 = t2, Team2 = t1, GameDate = new DateTime(2017,2,25,17,0,0), GameField = g2},
-                new Game {Team1 = t1, Team2 = t2, GameDate = new DateTime(2017,2,20,16,30,0), GameField = g1 },
-                new Game {Team1 = t2, Team2 = t1, GameDate = new DateTime(2017,2,25,17,0,0), GameField = g2},
-                new Game {Team1 = t1, Team2 = t2, GameDate = new DateTime(2017,2,20,16,30,0), GameField = g1 },
-                new Game {Team1 = t2, Team2 = t1, GameDate = new DateTime(2017,2,25,17,0,0), GameField = g2},
-                new Game {Team1 = t1, Team2 = t2, GameDate = new DateTime(2017,2,20,16,30,0), GameField = g1 },
-                new Game {Team1 = t2, Team2 = t1, GameDate = new DateTime(2017,2,25,17,0,0), GameField = g2},
+                new Game {Team1 = t1, Team2 = t2, GameDate = new DateTime(2017,2,20,16,30,0), GameField = g1, Description = description },
+                new Game {Team1 = t2, Team2 = t1, GameDate = new DateTime(2017,2,25,17,0,0), GameField = g2, Description = description },
+                new Game {Team1 = t3, Team2 = t4, GameDate = new DateTime(2017,2,20,16,30,0), GameField = g1, Description = description  },
+                new Game {Team1 = t2, Team2 = t1, GameDate = new DateTime(2017,2,25,17,0,0), GameField = g2, Description = description },
+                new Game {Team1 = t1, Team2 = t2, GameDate = new DateTime(2017,2,20,16,30,0), GameField = g1, Description = description  },
+                new Game {Team1 = t2, Team2 = t1, GameDate = new DateTime(2017,2,25,17,0,0), GameField = g2 , Description = description },
+                new Game {Team1 = t1, Team2 = t2, GameDate = new DateTime(2017,2,20,16,30,0), GameField = g1, Description = description  },
+                new Game {Team1 = t2, Team2 = t1, GameDate = new DateTime(2017,2,25,17,0,0), GameField = g2 , Description = description },
+                new Game {Team1 = t1, Team2 = t2, GameDate = new DateTime(2017,2,20,16,30,0), GameField = g1, Description = description  },
+                new Game {Team1 = t2, Team2 = t1, GameDate = new DateTime(2017,2,25,17,0,0), GameField = g2 , Description = description },
+                new Game {Team1 = t1, Team2 = t2, GameDate = new DateTime(2017,2,20,16,30,0), GameField = g1, Description = description  },
+                new Game {Team1 = t2, Team2 = t1, GameDate = new DateTime(2017,2,25,17,0,0), GameField = g2 , Description = description },
             };
 
             return Task.FromResult<IEnumerable<Game>>(list);
