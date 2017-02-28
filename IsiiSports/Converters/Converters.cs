@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Globalization;
 using System.Linq;
+using IsiiSports.Helpers;
 using Xamarin.Forms;
 
 namespace IsiiSports.Converters
@@ -98,6 +99,34 @@ namespace IsiiSports.Converters
         {
             var words = value.ToString().Split(' ').Take(2);
             return words.Aggregate("", (current, word) => current + word[0]);
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class RandomColorConverter : IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        {
+            var r = RandomGenerator.Instance;
+            var rnd = r.GetNext(1, 4);
+
+            switch (rnd)
+            {
+                case 1:
+                    return Color.FromHex("#27ae60");
+                case 2:
+                    return Color.FromHex("#2980b9");
+                case 3:
+                    return Color.FromHex("#8e44ad");
+                case 4:
+                    return Color.FromHex("#c0392b");
+                default:
+                    return Color.FromHex("#f39c12");
+            }
         }
 
         public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)

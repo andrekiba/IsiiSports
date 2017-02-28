@@ -31,6 +31,13 @@ namespace IsiiSports.ViewModels
 
         #region Commands
 
+        private ICommand itemTappedCommand;
+        public ICommand ItemTappedCommand => itemTappedCommand ?? (itemTappedCommand = new Command(ExecuteItemTappedCommand));
+        private void ExecuteItemTappedCommand(object item)
+        {
+            CoreMethods.PushPageModel<TeamViewModel>(item);
+        }
+
         private ICommand loadTeamsCommand;
         public ICommand LoadTeamsCommand => loadTeamsCommand ?? (loadTeamsCommand = new Command<bool>(async forceRefresh => await ExecuteLoadTeamsCommand(forceRefresh)));
         private async Task ExecuteLoadTeamsCommand(bool forceRefresh)

@@ -7,6 +7,7 @@
              xmlns:base="clr-namespace:IsiiSports.Base;assembly=IsiiSports"
              xmlns:plugin="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
              xmlns:conv="clr-namespace:IsiiSports.Converters;assembly=IsiiSports"
+             xmlns:system="clr-namespace:System;assembly=System.Runtime"
              x:Class="IsiiSports.Pages.GamesPage"
              d:BindingContext="{x:Static base:DesignViewModelLocator.GamesViewModel}"
              BackgroundColor="#e6e6e6">
@@ -14,11 +15,12 @@
   <ContentPage.Resources>
     <ResourceDictionary>
       <conv:NameToInitialsConverter x:Key="NameToInitialsConverter" />
+      <conv:RandomColorConverter x:Key="RandomColorConverter" />
+    <conv:RandomColorConverter x:Key="RandomColorConverterOpponent" />
     </ResourceDictionary>
   </ContentPage.Resources>
 
   <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
-    <!--<Label Text="Prova" TextColor="Black"></Label>-->
     <ListView x:Name="GamesList"
               ItemsSource="{Binding Games}"
               HorizontalOptions="Fill"
@@ -49,7 +51,7 @@
                                           HeightRequest="25"
                                           VerticalOptions="Center"
                                           HorizontalOptions="Center"
-                                          FillColor="#27ae60"/>
+                                          FillColor="{Binding Converter={StaticResource RandomColorConverter}}"/>
                       <Label Text="{Binding Team1.Name, Converter={StaticResource NameToInitialsConverter}}"
                              VerticalTextAlignment="Center"
                              HorizontalTextAlignment="Center"
@@ -68,7 +70,7 @@
                                           HeightRequest="25"
                                           VerticalOptions="Center"
                                           HorizontalOptions="Center"
-                                          FillColor="#c0392b"/>
+                                          FillColor="{Binding Converter={StaticResource RandomColorConverterOpponent}}"/>
                       <Label Text="{Binding Team2.Name, Converter={StaticResource NameToInitialsConverter}}"
                              VerticalTextAlignment="Center"
                              HorizontalTextAlignment="Center"

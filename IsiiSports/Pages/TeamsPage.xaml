@@ -14,6 +14,7 @@
     <ContentPage.Resources>
         <ResourceDictionary>
             <converters:NameToInitialsConverter x:Key="NameToInitialsConverter" />
+            <converters:RandomColorConverter x:Key="RandomColorConverter" />
         </ResourceDictionary>
     </ContentPage.Resources>
 
@@ -31,28 +32,31 @@
                 <DataTemplate>
                     <ViewCell>
                         <ViewCell.View>
-                            <Grid BackgroundColor="White">
+                            <Grid BackgroundColor="White"
+                                  Margin="6,6,6,0">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="Auto" />
                                     <ColumnDefinition Width="*" />
                                 </Grid.ColumnDefinitions>
                                 <Grid Margin="8,4,4,4"
                                       Grid.Row="0">
-                                    <abstractions:CircleImage WidthRequest="25"
-                                                              HeightRequest="25"
+                                    <abstractions:CircleImage WidthRequest="45"
+                                                              HeightRequest="45"
                                                               VerticalOptions="Center"
                                                               HorizontalOptions="Center"
-                                                              FillColor="#27ae60" />
+                                                              FillColor="{Binding Converter={StaticResource RandomColorConverter}}" />
                                     <Label Text="{Binding Name, Converter={StaticResource NameToInitialsConverter}}"
                                            VerticalTextAlignment="Center"
                                            HorizontalTextAlignment="Center"
                                            Style="{DynamicResource EvolveListItemTextStyle}"
                                            TextColor="White"
+                                           FontSize="16"
                                            StyleId="EventItemCircleDate" />
                                 </Grid>
                                 <Label Text="{Binding Name}"
-                                       TextColor="Gray"
-                                       FontSize="16"
+                                       TextColor="{StaticResource AsphaltPrimary}"
+                                       FontSize="20"
+                                       Grid.Column="1"
                                        VerticalOptions="Center" />
                             </Grid>
                         </ViewCell.View>

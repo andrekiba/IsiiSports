@@ -51,6 +51,7 @@
     </Compile>
     <Compile Include="Controls\SportButton.cs" />
     <Compile Include="Converters\Converters.cs" />
+    <Compile Include="Helpers\RandomGenerator.cs" />
     <Compile Include="Helpers\Settings.cs" />
     <Compile Include="Interfaces\IGameResultStore.cs" />
     <Compile Include="MainPage.xaml.cs">
