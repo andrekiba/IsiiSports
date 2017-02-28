@@ -16,7 +16,6 @@
     <ResourceDictionary>
       <conv:NameToInitialsConverter x:Key="NameToInitialsConverter" />
       <conv:RandomColorConverter x:Key="RandomColorConverter" />
-    <conv:RandomColorConverter x:Key="RandomColorConverterOpponent" />
     </ResourceDictionary>
   </ContentPage.Resources>
 
@@ -70,7 +69,7 @@
                                           HeightRequest="25"
                                           VerticalOptions="Center"
                                           HorizontalOptions="Center"
-                                          FillColor="{Binding Converter={StaticResource RandomColorConverterOpponent}}"/>
+                                          FillColor="{Binding Converter={StaticResource RandomColorConverter}}"/>
                       <Label Text="{Binding Team2.Name, Converter={StaticResource NameToInitialsConverter}}"
                              VerticalTextAlignment="Center"
                              HorizontalTextAlignment="Center"

@@ -7,6 +7,16 @@ namespace IsiiSports.Pages
         public TeamPage()
         {
             InitializeComponent();
+            PlayersList.ItemTapped += (sender, e) =>
+            {
+                if (Device.OS == TargetPlatform.iOS || Device.OS == TargetPlatform.Android)
+                    PlayersList.SelectedItem = null;
+            };
+
+            PlayersList.ItemSelected += (sender, e) =>
+            {
+                PlayersList.SelectedItem = null;
+            };
         }
     }
 }

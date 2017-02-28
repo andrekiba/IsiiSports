@@ -3,7 +3,111 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:converters="clr-namespace:IsiiSports.Converters;assembly=IsiiSports"
+             xmlns:abstractions="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
+             xmlns:base="clr-namespace:IsiiSports.Base;assembly=IsiiSports"
              mc:Ignorable="d"
+             Title="Team"
+             BackgroundColor="#e6e6e6"
              x:Class="IsiiSports.Pages.TeamPage">
-    <Label Text="{Binding MainText}" VerticalOptions="Center" HorizontalOptions="Center" />
+
+  <ContentPage.Resources>
+    <ResourceDictionary>
+      <converters:NameToInitialsConverter x:Key="NameToInitialsConverter" />
+      <converters:RandomColorConverter x:Key="RandomColorConverter" />
+    </ResourceDictionary>
+  </ContentPage.Resources>
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+    </Grid.RowDefinitions>
+
+    <Grid Grid.Row="0"
+          BackgroundColor="White">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Grid Grid.Column="0"
+            Margin="12,24">
+        <abstractions:CircleImage WidthRequest="65"
+                         HeightRequest="65"
+                         VerticalOptions="Center"
+                         HorizontalOptions="Center"
+                         FillColor="{Binding Converter={StaticResource RandomColorConverter}}"/>
+        <Label Text="{Binding Team.Name, Converter={StaticResource NameToInitialsConverter}}"
+               VerticalTextAlignment="Center"
+               HorizontalTextAlignment="Center"
+               Style="{DynamicResource EvolveListItemTextStyle}"
+               TextColor="White"
+               FontSize="24"
+               StyleId="EventItemCircleDate"/>
+      </Grid>
+      <Label Text="{Binding Team.Name}"
+             FontSize="22"
+             VerticalOptions="Center"
+             Grid.Column="1"
+             FontAttributes="Bold"
+             TextColor="{StaticResource AsphaltPrimary}"/>
+    </Grid>
+
+    <Label Text="Players"
+           FontSize="18"
+           Margin="12,0"
+           VerticalOptions="Center"
+           Grid.Row="1"
+           FontAttributes="Bold"
+           TextColor="{StaticResource AsphaltPrimary}"/>
+
+    <ListView Grid.Row="2"
+              x:Name="PlayersList"
+              ItemsSource="{Binding Team.Players}"
+              HorizontalOptions="Fill"
+              VerticalOptions="Fill"
+              base:ListViewItemTappedAttached.Command="{Binding ItemTappedCommand}"
+              RowHeight="100"
+              IsRefreshing="{Binding IsBusy, Mode=OneWay}"
+              RefreshCommand="{Binding LoadGamesCommand}">
+      <ListView.ItemTemplate>
+        <DataTemplate>
+          <ViewCell>
+            <ViewCell.View>
+              <Grid BackgroundColor="White"
+                    Margin="6,6,6,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" />
+                  <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid Margin="8,4,4,4"
+                      Grid.Row="0">
+                  <abstractions:CircleImage WidthRequest="45"
+                                            HeightRequest="45"
+                                            VerticalOptions="Center"
+                                            HorizontalOptions="Center"
+                                            FillColor="{Binding Converter={StaticResource RandomColorConverter}}" />
+                  <Label Text="{Binding Name, Converter={StaticResource NameToInitialsConverter}}"
+                         VerticalTextAlignment="Center"
+                         HorizontalTextAlignment="Center"
+                         Style="{DynamicResource EvolveListItemTextStyle}"
+                         TextColor="White"
+                         FontSize="16"
+                         StyleId="EventItemCircleDate" />
+                </Grid>
+                <Label Text="{Binding Name}"
+                       TextColor="{StaticResource AsphaltPrimary}"
+                       FontSize="20"
+                       Grid.Column="1"
+                       VerticalOptions="Center" />
+              </Grid>
+            </ViewCell.View>
+          </ViewCell>
+        </DataTemplate>
+      </ListView.ItemTemplate>
+    </ListView>
+
+  </Grid>
+
 </ContentPage>

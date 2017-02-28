@@ -8,8 +8,8 @@ namespace IsiiSports.Helpers
 {
     public sealed class RandomGenerator
     {
-        private static int latestNumber = 0;
-        private static Random r;
+        private int latestNumber = 0;
+        private Random r;
 
         private static readonly Lazy<RandomGenerator> lazy = new Lazy<RandomGenerator>(() => new RandomGenerator());
 
