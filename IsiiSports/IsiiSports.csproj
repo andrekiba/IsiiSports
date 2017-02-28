@@ -45,7 +45,7 @@
     <Compile Include="Auth\GoogleUser.cs" />
     <Compile Include="Auth\IAuthentication.cs" />
     <Compile Include="Base\BottomBarTabbedNavigationContainer.cs" />
-    <Compile Include="Base\Configuration.cs" />
+    <Compile Include="Base\Keys.cs" />
     <Compile Include="Controls\ImageButton.xaml.cs">
       <DependentUpon>ImageButton.xaml</DependentUpon>
     </Compile>

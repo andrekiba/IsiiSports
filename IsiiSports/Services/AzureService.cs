@@ -31,6 +31,7 @@ namespace IsiiSports.Services
         #region Properties
 
         public static MobileServiceClient Client { get; protected set; }
+        public AuthUser AuthUser { get; protected set; }
         public bool IsInitialized { get; private set; }
         public MobileServiceAuthenticationProvider AuthProvider { get; protected set; }
         public static bool UseAuth { get; protected set; } = true;
@@ -56,7 +57,7 @@ namespace IsiiSports.Services
 #if AUTH
             UseAuth = true;
             
-            Client = new MobileServiceClient(Configuration.AppUrl, new AuthHandler());
+            Client = new MobileServiceClient(Keys.AppUrl, new AuthHandler());
 
             if (!string.IsNullOrWhiteSpace (Settings.AzureAuthToken) && !string.IsNullOrWhiteSpace (Settings.AzureUserId)) {
                 Client.CurrentUser = new MobileServiceUser(Settings.AzureUserId)
@@ -66,7 +67,7 @@ namespace IsiiSports.Services
             }
 #else
                 //Create our client
-                Client = new MobileServiceClient(Configuration.AppUrl);
+                Client = new MobileServiceClient(Keys.AppUrl);
 #endif
 
                 //setup our local sqlite store and intialize our table
@@ -122,25 +123,41 @@ namespace IsiiSports.Services
         {
             await InitializeAsync();
 
+            //se ho già tutte le informazioni necessarie creo direttamente l'utente
+            if (!string.IsNullOrEmpty(Settings.AzureUserId) && !string.IsNullOrEmpty(Settings.AzureAuthToken))
+            {
+                Client.CurrentUser = new MobileServiceUser(Settings.AzureUserId)
+                {
+                    MobileServiceAuthenticationToken = Settings.AzureAuthToken
+                };
+            }
+
             var auth = DependencyService.Get<IAuthentication>();
 
 			if (!string.IsNullOrEmpty(authProvider)) 
-			{
-				Settings.AuthProvider = authProvider;
-			}
+				Settings.AuthProvider = authProvider;			
 
 			var authUser = await auth.LoginAsync(Client, Settings.AuthProvider);
 
             if (authUser != null)
             {
+                AuthUser = authUser;
+
                 Settings.AzureAuthToken = authUser.MobileServiceUser.MobileServiceAuthenticationToken;
                 Settings.AzureUserId = authUser.MobileServiceUser.UserId;
+                Settings.AccessToken = Settings.AuthProvider == MobileServiceAuthenticationProvider.Google.ToString() ? authUser.GoogleUser.AccessToken : authUser.FacebookUser.AccessToken;
+                //Settings.RefreshToken = Settings.AuthProvider == "Google" ?
+                Settings.UserId = Settings.AuthProvider == MobileServiceAuthenticationProvider.Google.ToString() ? authUser.GoogleUser.UserId : authUser.FacebookUser.UserId;
+
                 return true;
             }
 
-			Settings.AuthProvider = null;
-			Settings.AzureAuthToken = string.Empty;
+            AuthUser = null;
+            Settings.AuthProvider = null;
+            Settings.AzureAuthToken = string.Empty;
             Settings.AzureUserId = string.Empty;
+            Settings.AccessToken = string.Empty;
+            Settings.UserId = string.Empty;
 
             return false;
         }

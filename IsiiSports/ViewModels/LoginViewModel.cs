@@ -2,7 +2,9 @@
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Acr.UserDialogs;
+using IsiiSports.Auth;
 using IsiiSports.Base;
+using IsiiSports.Helpers;
 using Xamarin.Forms;
 
 namespace IsiiSports.ViewModels
@@ -10,9 +12,6 @@ namespace IsiiSports.ViewModels
     public class LoginViewModel : BaseViewModel
     {
         #region Properties
-
-        public string UserName { get; set; }
-        public string Password { get; set; }
 
         #endregion
 
@@ -50,8 +49,8 @@ namespace IsiiSports.ViewModels
                 if (loggedIn)
                     CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.MainContainer);
                 else
-                    //await CoreMethods.DisplayAlert("Error", "Errore durante il login...", "OK");
                     await UserDialogs.Instance.AlertAsync("Error", "Errore durante il login...", "OK");
+
             }
             catch (Exception)
             {

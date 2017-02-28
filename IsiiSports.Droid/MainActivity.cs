@@ -76,7 +76,7 @@ namespace IsiiSports.Droid
 
             #region Mobile Center
 
-            MobileCenter.Start(Configuration.MobileCenterAppKey, typeof(Analytics), typeof(Crashes));
+            MobileCenter.Start(Keys.MobileCenterAppKey, typeof(Analytics), typeof(Crashes));
 
             #endregion 
 

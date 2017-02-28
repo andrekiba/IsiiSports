@@ -4,9 +4,9 @@ using Foundation;
 using Google.Core;
 using Google.SignIn;
 using ImageCircle.Forms.Plugin.iOS;
+using IsiiSports.Base;
 using Microsoft.Azure.Mobile;
 using UIKit;
-using Configuration = IsiiSports.Base.Configuration;
 
 namespace IsiiSports.iOS
 {
@@ -62,7 +62,7 @@ namespace IsiiSports.iOS
 
             #region Mobile Center
 
-            MobileCenter.Configure(Configuration.MobileCenterAppKey);
+            MobileCenter.Configure(Keys.MobileCenterAppKey);
 
             #endregion
 

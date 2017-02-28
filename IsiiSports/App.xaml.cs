@@ -3,6 +3,8 @@ using Acr.UserDialogs;
 using BottomBar.XamarinForms;
 using FreshMvvm;
 using IsiiSports.Base;
+using IsiiSports.DataObjects;
+using IsiiSports.Helpers;
 using IsiiSports.Interfaces;
 using IsiiSports.Services;
 using IsiiSports.Services.Stores;
@@ -17,22 +19,30 @@ namespace IsiiSports
 {
 	public partial class App : Application
 	{
-		public App()
+	    public static App Instance { get; private set; }
+        public Player CurrentPlayer { get; set; }
+        
+        public App()
 		{
 			InitializeComponent();
-			SetupIoC();
+
+		    Instance = this;
+
+            SetupIoC();
 
 			var loginPage = FreshPageModelResolver.ResolvePageModel<LoginViewModel>();
 			var loginContainer = new FreshNavigationContainer(loginPage, NavigationContainerNames.LoginContainer);
 
-			var mainContainer = new BottomBarTabbedNavigationContainer(NavigationContainerNames.MainContainer);
-			mainContainer.AddTab<GamesViewModel>("Games", Device.OnPlatform("", "", ""));
-			mainContainer.AddTab<TeamsViewModel>("Teams", Device.OnPlatform("", "", ""));
+			var mainContainer = new FreshTabbedFONavigationContainer("Games", NavigationContainerNames.MainContainer);
+            //var mainContainer = new FreshTabbedNavigationContainer(NavigationContainerNames.MainContainer);
+            //var mainContainer = new BottomBarTabbedNavigationContainer(NavigationContainerNames.MainContainer);
+            mainContainer.AddTab<GamesViewModel>("Games", Device.OnPlatform("", "", ""));
+		    mainContainer.AddTab<TeamsViewModel>("Teams", Device.OnPlatform("", "", ""));
 
-		    //var first = (BottomBarPage) mainContainer.TabbedPages.First();
-		    //var second = (BottomBarPage) mainContainer.TabbedPages.Last();
-
-			MainPage = loginContainer;
+		    if (Settings.IsLoggedIn)
+		        MainPage = mainContainer;
+            else
+			    MainPage = loginContainer;
 		}
 
 		private static void SetupIoC()
@@ -46,7 +56,7 @@ namespace IsiiSports
 			FreshIOC.Container.Register(UserDialogs.Instance);
 		}
 
-		protected override void OnStart()
+	    protected override void OnStart()
 		{
 			// Handle when your app starts
 			MobileCenter.Start(typeof(Analytics), typeof(Crashes));

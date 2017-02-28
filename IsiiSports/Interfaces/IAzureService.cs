@@ -1,4 +1,5 @@
 ﻿using System.Threading.Tasks;
+using IsiiSports.Auth;
 
 namespace IsiiSports.Interfaces
 {
