@@ -41,11 +41,11 @@ namespace IsiiSports.ViewModels
 
                 IsBusy = true;
 
-                UserDialogs.Instance.ShowLoading("Logging in...");
+                //UserDialogs.Instance.ShowLoading("Logging in...");
 
                 var loggedIn = await AzureService.LoginAsync(authProvider);
 
-                UserDialogs.Instance.HideLoading();
+                //UserDialogs.Instance.HideLoading();
 
                 if (loggedIn)
                     CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.MainContainer);

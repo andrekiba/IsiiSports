@@ -137,24 +137,33 @@ namespace IsiiSports.iOS.Auth
         #region Facebook Client Flow
 
         public async Task<AccessToken> LoginFacebookAsync()
-        {
-            var facebookLoginTcs = new TaskCompletionSource<AccessToken>();
-            var loginManager = new LoginManager
+        {           
+			var loginManager = new LoginManager
             {
-                LoginBehavior = LoginBehavior.SystemAccount
+				LoginBehavior = LoginBehavior.Native
             };
-            loginManager.LogInWithReadPermissions(new[] { "public_profile" }, GetController(),
-                (loginResult, error) =>
-                {
-                    if (loginResult.Token != null)
-                    {
-                        facebookLoginTcs.TrySetResult(loginResult.Token); 
-                    }            
-                    else
-                        facebookLoginTcs.TrySetException(new Exception("Facebook Client Flow Login Failed"));
-                });
 
-            return await facebookLoginTcs.Task;
+			var loginResult = await loginManager.LogInWithReadPermissionsAsync(new[] { "public_profile" }, GetController());
+
+			if (loginResult.Token != null)
+				return loginResult.Token;
+
+			throw new Exception("Facebook Client Flow Login Failed");
+            
+			//var facebookLoginTcs = new TaskCompletionSource<AccessToken>();
+
+			//loginManager.LogInWithReadPermissions(new[] { "public_profile" }, GetController(),
+   //             (loginResult, error) =>
+   //             {
+   //                 if (loginResult.Token != null)
+   //                 {
+   //                     facebookLoginTcs.TrySetResult(loginResult.Token); 
+   //                 }            
+   //                 else
+   //                     facebookLoginTcs.TrySetException(new Exception("Facebook Client Flow Login Failed"));
+   //             });
+
+   //         return await facebookLoginTcs.Task;
         }
 
         #endregion
