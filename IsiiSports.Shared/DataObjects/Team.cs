@@ -9,5 +9,6 @@ namespace IsiiSports.DataObjects
 		public IList<Game> Games { get; set; } = new List<Game>(); 
 		public string NotificationId { get; set; }
 		public string ImageUrl { get; set;}
+        public string Description { get; set; }
     }
 }

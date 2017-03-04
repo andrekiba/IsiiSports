@@ -17,66 +17,66 @@ namespace IsiiSports.Services.Stores
         {
             var playersInformatici = new List<Player>()
             {
-                new Player() {Name = "Mauro Icardi"},
-                new Player() {Name = "Roberto Gagliardini"},
-                new Player() {Name = "Ivan Perisic"},
-                new Player() {Name = "Rodrigo Palacio"},
-                new Player() {Name = "Samir Andanovic"}
+                new Player() {Name = "Mauro Icardi", Description = "Attaccante"},
+                new Player() {Name = "Roberto Gagliardini", Description = "Attaccante"},
+                new Player() {Name = "Ivan Perisic", Description = "Centrocampista"},
+                new Player() {Name = "Rodrigo Palacio", Description = "Difensore"},
+                new Player() {Name = "Samir Andanovic", Description = "Portiere"}
             };
 
             var playersMeccanici = new List<Player>()
             {
-                new Player() {Name = "Gonzalo Higuain"},
-                new Player() {Name = "Paulo Dybala"},
-                new Player() {Name = "Sami Khedira"},
-                new Player() {Name = "Leonardo Bonucci"},
-                new Player() {Name = "Gianluigi Buffon"}
+                new Player() {Name = "Gonzalo Higuain", Description = "Attaccante"},
+                new Player() {Name = "Paulo Dybala", Description = "Centrocampista"},
+                new Player() {Name = "Sami Khedira", Description = "Centrocampista"},
+                new Player() {Name = "Leonardo Bonucci", Description = "Difensore"},
+                new Player() {Name = "Gianluigi Buffon", Description = "Portiere"}
             };
 
             var playersChimici = new List<Player>()
             {
-                new Player() {Name = "Marko Pjaca"},
-                new Player() {Name = "Giorgio Chiellini"},
-                new Player() {Name = "Claudio Marchisio"},
-                new Player() {Name = "Stefano Sturaro"},
-                new Player() {Name = "Paolo De Ceglie"}
+                new Player() {Name = "Marko Pjaca", Description = "Attaccante"},
+                new Player() {Name = "Giorgio Chiellini", Description = "Centrocampista"},
+                new Player() {Name = "Claudio Marchisio", Description = "Difensore"},
+                new Player() {Name = "Stefano Sturaro", Description = "Difensore"},
+                new Player() {Name = "Paolo De Ceglie", Description = "Portiere"}
             };
 
             var playersElettronici = new List<Player>()
             {
-                new Player() {Name = "Jeison Murillo"},
-                new Player() {Name = "Davide Santon"},
-                new Player() {Name = "Marco Andreolli"},
-                new Player() {Name = "Tommaso Berni"},
-                new Player() {Name = "Ionut Radu"}
+                new Player() {Name = "Jeison Murillo", Description = "Attaccante"},
+                new Player() {Name = "Davide Santon", Description = "Centrocampista"},
+                new Player() {Name = "Marco Andreolli", Description = "Difensore"},
+                new Player() {Name = "Tommaso Berni", Description = "Difensore"},
+                new Player() {Name = "Ionut Radu", Description = "Portiere"}
             };
 
             var playersProfessori = new List<Player>()
             {
-                new Player() {Name = "Francesco Totti"},
-                new Player() {Name = "Filippo Inzaghi"},
-                new Player() {Name = "Alessandro Del Piero"},
-                new Player() {Name = "Fabio Cannavaro"},
-                new Player() {Name = "Angelo Peruzzi"}
+                new Player() {Name = "Francesco Totti", Description = "Attaccante"},
+                new Player() {Name = "Filippo Inzaghi", Description = "Attaccante"},
+                new Player() {Name = "Alessandro Del Piero", Description = "Centrocampista"},
+                new Player() {Name = "Fabio Cannavaro", Description = "Difensore"},
+                new Player() {Name = "Angelo Peruzzi", Description = "Portiere"}
             };
 
             var playersBidelli = new List<Player>()
             {
-                new Player() {Name = "Manuel Locatelli"},
-                new Player() {Name = "Carlos Bacca"},
-                new Player() {Name = "Ignazio Abate"},
-                new Player() {Name = "Riccardo Montolivo"},
-                new Player() {Name = "Alessandro Plizzari"}
+                new Player() {Name = "Manuel Locatelli", Description = "Attaccante"},
+                new Player() {Name = "Carlos Bacca", Description = "Centrocampista"},
+                new Player() {Name = "Ignazio Abate", Description = "Centrocampista"},
+                new Player() {Name = "Riccardo Montolivo", Description = "Difensore"},
+                new Player() {Name = "Alessandro Plizzari", Description = "Portiere"}
             };
 
             var teams = new List<Team>()
             {
-                new Team() { Name = "Informatici", Players = playersInformatici},
-                new Team() { Name = "Meccanici", Players = playersMeccanici},
-                new Team() { Name = "Elettronici", Players = playersElettronici},
-                new Team() { Name = "Chimici", Players = playersChimici},
-                new Team() { Name = "Bidelli", Players = playersBidelli},
-                new Team() { Name = "Professori", Players = playersProfessori}
+                new Team() { Name = "Informatici", Players = playersInformatici,Description = "Squadra fortissima"},
+                new Team() { Name = "Meccanici", Players = playersMeccanici, Description = "Squadra forte"},
+                new Team() { Name = "Elettronici", Players = playersElettronici, Description = "Squadra Debole"},
+                new Team() { Name = "Chimici", Players = playersChimici, Description = "Squadra nuova"},
+                new Team() { Name = "Bidelli", Players = playersBidelli, Description = "Squadra normale"},
+                new Team() { Name = "Professori", Players = playersProfessori, Description = "Squadra nuova"}
             };
             return Task.FromResult<IEnumerable<Team>>(teams);
         }

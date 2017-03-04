@@ -40,8 +40,8 @@
                                 </Grid.ColumnDefinitions>
                                 <Grid Margin="8,4,4,4"
                                       Grid.Row="0">
-                                    <abstractions:CircleImage WidthRequest="45"
-                                                              HeightRequest="45"
+                                    <abstractions:CircleImage WidthRequest="65"
+                                                              HeightRequest="65"
                                                               VerticalOptions="Center"
                                                               HorizontalOptions="Center"
                                                               FillColor="{Binding Converter={StaticResource RandomColorConverter}}" />
@@ -50,14 +50,25 @@
                                            HorizontalTextAlignment="Center"
                                            Style="{DynamicResource EvolveListItemTextStyle}"
                                            TextColor="White"
-                                           FontSize="16"
+                                           FontSize="20"
                                            StyleId="EventItemCircleDate" />
                                 </Grid>
-                                <Label Text="{Binding Name}"
-                                       TextColor="{StaticResource AsphaltPrimary}"
-                                       FontSize="20"
-                                       Grid.Column="1"
-                                       VerticalOptions="Center" />
+                                <Grid Grid.Column="1">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="*" />
+                                    </Grid.RowDefinitions>
+                                    <Label Text="{Binding Name}"
+                                           TextColor="{StaticResource AsphaltPrimary}"
+                                           FontSize="20"
+                                           Grid.Row="0"
+                                           VerticalOptions="End" />
+                                    <Label Text="{Binding Description}"
+                                           TextColor="{StaticResource GrayMedium}"
+                                           FontSize="16"
+                                           Grid.Row="1"
+                                           VerticalOptions="Start" />
+                                </Grid>
                             </Grid>
                         </ViewCell.View>
                     </ViewCell>

@@ -1,4 +1,6 @@
-﻿namespace IsiiSports.DataObjects
+﻿using System;
+
+namespace IsiiSports.DataObjects
 {
     public class Player : BaseDataObject
     {
@@ -11,5 +13,6 @@
         public string NotificationId { get; set; }
         public string TeamId { get; set; }
         public Team Team { get; set; }
+        public String Description { get; set; }
     }
 }
