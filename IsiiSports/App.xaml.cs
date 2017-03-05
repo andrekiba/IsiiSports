@@ -1,8 +1,8 @@
 ﻿using System.Linq;
 using Acr.UserDialogs;
-using BottomBar.XamarinForms;
 using FreshMvvm;
 using IsiiSports.Base;
+using IsiiSports.Controls;
 using IsiiSports.DataObjects;
 using IsiiSports.Helpers;
 using IsiiSports.Interfaces;
@@ -21,28 +21,38 @@ namespace IsiiSports
 	{
 	    public static App Instance { get; private set; }
         public Player CurrentPlayer { get; set; }
-        
-        public App()
+
+		public App()
 		{
 			InitializeComponent();
 
-		    Instance = this;
+			Instance = this;
 
-            SetupIoC();
+			SetupIoC();
 
 			var loginPage = FreshPageModelResolver.ResolvePageModel<LoginViewModel>();
 			var loginContainer = new FreshNavigationContainer(loginPage, NavigationContainerNames.LoginContainer);
 
-			var mainContainer = new FreshTabbedFONavigationContainer("ISII Sports", NavigationContainerNames.MainContainer);
-            //var mainContainer = new FreshTabbedNavigationContainer(NavigationContainerNames.MainContainer);
-            //var mainContainer = new BottomBarTabbedNavigationContainer(NavigationContainerNames.MainContainer);
-            mainContainer.AddTab<GamesViewModel>("Games", Device.OnPlatform("", "", ""));
-		    mainContainer.AddTab<TeamsViewModel>("Teams", Device.OnPlatform("", "", ""));
+			//var mainContainer = new FreshTabbedFONavigationContainer("ISII Sports", NavigationContainerNames.MainContainer);
+			//var mainContainer = new FreshTabbedNavigationContainer(NavigationContainerNames.MainContainer);
+			var mainContainer = new BottomBarTabbedFoNavigationContainer("ISII Sports", NavigationContainerNames.MainContainer);
+			mainContainer.AddTab<GamesViewModel>("Games", Device.OnPlatform("games.png", "games.png", ""));
+			mainContainer.AddTab<TeamsViewModel>("Teams", Device.OnPlatform("teams.png", "teams.png", ""));
+			mainContainer.AddTab<InfoViewModel>("Info", Device.OnPlatform("info.png", "inof.png", ""));
+            //mainContainer.AddTab<InfoViewModel>("Info1", Device.OnPlatform("", "", ""));
 
-		    if (Settings.IsLoggedIn)
-		        MainPage = mainContainer;
-            else
-			    MainPage = loginContainer;
+            mainContainer.FirstTabbedPage.BarTheme = BottomBarPage.BarThemeTypes.Light;
+			mainContainer.FirstTabbedPage.FixedMode = false;
+
+			var tabs = mainContainer.TabbedPages.ToList();
+			tabs[0].SetTabColor(null);
+			tabs[1].SetTabColor(Color.FromHex("#7B1FA2"));
+			tabs[2].SetTabColor(Color.FromHex("#FF5252"));           
+
+            if (Settings.IsLoggedIn)
+			    MainPage = mainContainer;
+			else
+			 	MainPage = loginContainer;
 		}
 
 		private static void SetupIoC()

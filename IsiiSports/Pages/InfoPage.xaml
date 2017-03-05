@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+			 xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+			 xmlns:base="clr-namespace:IsiiSports.Base;assembly=IsiiSports"
+			 d:BindingContext="{x:Static base:DesignViewModelLocator.InfoViewModel}"
+			 x:Class="IsiiSports.Pages.InfoPage"
+             BackgroundColor="#e6e6e6"
+             Title="Info">
+
+    <ContentPage.ToolbarItems>
+        <ToolbarItem Text="Logout" Icon="user.png" Order="Primary" Priority="0"
+					Command="{Binding LogoutCommand}" />
+    </ContentPage.ToolbarItems>
+
+    <StackLayout Margin="12,25,12,20" Spacing="20">
+        <Label Text="Account"
+               FontSize="18"
+               Margin="12,0"
+               VerticalOptions="Center"
+               FontAttributes="Bold"
+               TextColor="{StaticResource AsphaltPrimary}" />
+
+        <StackLayout Margin="12,0,12,0" Spacing="20">
+
+			<Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <Label TextColor="{StaticResource AsphaltPrimary}" Text="Name" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" Grid.Column="0"/>
+                <Label HorizontalOptions="FillAndExpand" Grid.Column="1" Text="{Binding Name}"/>
+            </Grid>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <Label TextColor="{StaticResource AsphaltPrimary}" Text="Nickname" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" Grid.Column="0"/>
+                <Label HorizontalOptions="FillAndExpand" Grid.Column="1" Text="{Binding Nickname}"/>
+            </Grid>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="2*"/>
+                </Grid.ColumnDefinitions>
+                <Label TextColor="{StaticResource AsphaltPrimary}" Text="Email" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" Grid.Column="0"/>
+                <Label HorizontalOptions="FillAndExpand" Grid.Column="1" Text="{Binding Email}"/>
+            </Grid>
+
+        </StackLayout>
+
+    </StackLayout>
+
+</ContentPage>

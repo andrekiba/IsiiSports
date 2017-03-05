@@ -1,8 +1,8 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using BottomBar.XamarinForms;
 using FreshMvvm;
+using IsiiSports.Controls;
 using Xamarin.Forms;
 
 namespace IsiiSports.Base
@@ -43,9 +43,10 @@ namespace IsiiSports.Base
 
         internal Page CreateContainerPageSafe(Page page)
         {
-            if (page is NavigationPage || page is MasterDetailPage || page is TabbedPage)
+			if (page is NavigationPage || page is MasterDetailPage || page is TabbedPage)
                 return page;
-            return CreateContainerPage(page);
+            
+			return CreateContainerPage(page);
         }
 
         protected virtual Page CreateContainerPage(Page page)

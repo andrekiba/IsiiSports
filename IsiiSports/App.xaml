@@ -61,7 +61,7 @@
         <Setter Property="TextColor" Value="White" />
         <Setter Property="BorderRadius" Value="4" />
         <Setter Property="FontSize" Value="Medium" />
-        <Setter Property="BackgroundColor" Value="{StaticResource GrayPrimary}" />
+        <Setter Property="BackgroundColor" Value="{StaticResource GreenLight}" />
       </Style>
       <Style TargetType="Button" BasedOn="{StaticResource ButtonStyle}" />
       <Style TargetType="controls:SportButton" BasedOn="{StaticResource ButtonStyle}" />

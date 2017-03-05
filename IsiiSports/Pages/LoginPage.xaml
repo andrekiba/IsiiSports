@@ -6,35 +6,23 @@
             mc:Ignorable="d"
             xmlns:base="clr-namespace:IsiiSports.Base;assembly=IsiiSports"
             xmlns:controls="clr-namespace:IsiiSports.Controls;assembly=IsiiSports"
+			xmlns:plugin="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
 	        x:Class="IsiiSports.Pages.LoginPage"
-	        BackgroundColor="{StaticResource GreenPrimary}"
+	        BackgroundColor="{StaticResource GrayPrimary}"
 	        d:BindingContext="{x:Static base:DesignViewModelLocator.LoginViewModel}">
 
-    <Grid HorizontalOptions="Fill" Padding="24" VerticalOptions="Fill">
+    <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
         <Grid.RowDefinitions>
+        	<RowDefinition Height=".2*"/>
+			<RowDefinition Height="*"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
-        <StackLayout x:Name="ImageStack" Grid.Row="0" Padding="24,0" VerticalOptions="Center">
-            <Label FontSize="60" HorizontalOptions="Center" Text="ISII Sports" TextColor="White" VerticalOptions="Center"/>
+        <StackLayout x:Name="ImageStack" Grid.Row="1" Spacing="20" VerticalOptions="Center">
+        	<plugin:CircleImage Source="logo.png" WidthRequest="250" HeightRequest="250" VerticalOptions="Center" HorizontalOptions="Center"
+                                FillColor="{StaticResource GreenLight}" BorderColor="{StaticResource GreenPrimary}" BorderThickness="6"/>
+			<Label FontSize="40" HorizontalOptions="Center" Text="ISII Sports" TextColor="{StaticResource GreenPrimary}" VerticalOptions="Center"/>
         </StackLayout>
-        <StackLayout x:Name="ButtonStack" Grid.Row="1" HorizontalOptions="CenterAndExpand" Spacing="30" VerticalOptions="Center">
-            <!--<controls:ImageButton x:Name="GoogleButton"
-				ButtonBackgroundColor="{StaticResource GreenLight}"
-				Command="{Binding LoginCommand}"
-				CommandParameter="Google"
-				IsVisible="{Binding IsNotBusy}"
-				Source="google"
-				Text="Login with Google"
-				WidthRequest="300"/>
-			<controls:ImageButton x:Name="FacebookButton"
-				ButtonBackgroundColor="{StaticResource GreenLight}"
-				Command="{Binding LoginCommand}"
-				CommandParameter="Facebook"
-				IsVisible="{Binding IsNotBusy}"
-				Source="facebook"
-				Text="Login with Facebook"
-				WidthRequest="300"/>-->
+        <StackLayout x:Name="ButtonStack" Grid.Row="2" HorizontalOptions="Center" VerticalOptions="Center" Spacing="15">
             <controls:SportButton Command="{Binding LoginCommand}"
 				CommandParameter="Google"
 				HorizontalOptions="CenterAndExpand"

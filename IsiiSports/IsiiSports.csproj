@@ -46,6 +46,8 @@
     <Compile Include="Auth\IAuthentication.cs" />
     <Compile Include="Base\BottomBarTabbedNavigationContainer.cs" />
     <Compile Include="Base\Keys.cs" />
+    <Compile Include="Controls\BottomBarPage.cs" />
+    <Compile Include="Controls\BottomBarPageExtensions.cs" />
     <Compile Include="Controls\ImageButton.xaml.cs">
       <DependentUpon>ImageButton.xaml</DependentUpon>
     </Compile>
@@ -96,6 +98,11 @@
     <Compile Include="Interfaces\ITeamStore.cs" />
     <Compile Include="Base\DesignViewModelLocator.cs" />
     <Compile Include="Base\ListViewItemTappedAttached.cs" />
+    <Compile Include="Pages\InfoPage.xaml.cs">
+      <DependentUpon>InfoPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\InfoViewModel.cs" />
+    <Compile Include="Base\BottomBarTabbedFoNavigationContainer.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainPage.xaml">
@@ -106,11 +113,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
     </EmbeddedResource>
+    <EmbeddedResource Include="Pages\InfoPage.xaml">
+      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
+    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="BottomBar.XamarinForms">
-      <HintPath>..\packages\ThriveGmbH.BottomNavigationBar.XF.1.0.1\lib\portable-net45+win+wp80+MonoAndroid10+xamarinios10+MonoTouch10\BottomBar.XamarinForms.dll</HintPath>
-    </Reference>
     <Reference Include="FreshEssentials">
       <HintPath>..\packages\FreshEssentials.2.1.3\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\FreshEssentials.dll</HintPath>
       <Private>True</Private>
@@ -234,6 +241,9 @@
     <Reference Include="Xamarin.Forms.Xaml, Version=2.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Xamarin.Forms.2.3.3.193\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+Xamarin.iOS10+xamarinmac20\Xamarin.Forms.Xaml.dll</HintPath>
       <Private>True</Private>
+    </Reference>
+    <Reference Include="SlideOverKit">
+      <HintPath>..\packages\SlideOverKit.2.1.4\lib\portable-win+net45+wp80+win81+wpa81+MonoAndroid10+MonoTouch10+Xamarin.iOS10\SlideOverKit.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

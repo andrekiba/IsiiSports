@@ -68,7 +68,7 @@ namespace IsiiSports.iOS
 
             global::Xamarin.Forms.Forms.Init();
             ImageCircleRenderer.Init();
-
+			SlideOverKit.iOS.SlideOverKit.Init();
             LoadApplication(new App());
 
             //Facebook
