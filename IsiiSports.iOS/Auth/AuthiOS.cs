@@ -21,7 +21,7 @@ namespace IsiiSports.iOS.Auth
         {
             try
             {
-                var authProvider = (MobileServiceAuthenticationProvider)Enum.Parse(typeof(MobileServiceAuthenticationProvider), Settings.AuthProvider);
+                var authProvider = (MobileServiceAuthenticationProvider)Enum.Parse(typeof(MobileServiceAuthenticationProvider), provider);
 				var authUser = new AuthUser();
 
                 #region Client Flow
@@ -82,11 +82,40 @@ namespace IsiiSports.iOS.Auth
             }
             catch (Exception ex)
             {
-                
+                Debug.WriteLine(ex.Message);
             }
 
             return null;
         }
+
+        public async Task<bool> LogoutAsync(IMobileServiceClient client, string provider)
+        {
+            try
+            {
+                var authProvider = (MobileServiceAuthenticationProvider)Enum.Parse(typeof(MobileServiceAuthenticationProvider), provider);
+
+                if (authProvider == MobileServiceAuthenticationProvider.Facebook)
+                {
+                    LogoutFacebook();
+                }
+
+                if (authProvider == MobileServiceAuthenticationProvider.Google)
+                {
+                    LogoutGoogle();
+                }
+
+                await client.LogoutAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            return false;
+        }
+
         public virtual async Task<bool> RefreshUser(IMobileServiceClient client)
         {
             try
@@ -166,6 +195,16 @@ namespace IsiiSports.iOS.Auth
    //         return await facebookLoginTcs.Task;
         }
 
+        public void LogoutFacebook()
+        {
+            var loginManager = new LoginManager
+            {
+                LoginBehavior = LoginBehavior.Native
+            };
+
+            loginManager.LogOut();
+        }
+
         #endregion
 
         #region Google Client Flow
@@ -199,13 +238,18 @@ namespace IsiiSports.iOS.Auth
             return await googleLoginTcs.Task;
         }
 
-		public void Dispose()
+        public void LogoutGoogle()
+        {
+            SignIn.SharedInstance.SignOutUser();
+        }
+
+        public void Dispose()
 		{
 			SignIn.SharedInstance.Dispose();
 		}
 
 		public IntPtr Handle => GetController().Handle;
-
-		#endregion
+        
+        #endregion
 	}
 }

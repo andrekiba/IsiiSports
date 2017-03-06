@@ -8,20 +8,20 @@ using Xamarin.Forms;
 
 namespace IsiiSports.ViewModels
 {
-	public class InfoViewModel : BaseViewModel
-	{
+    public class InfoViewModel : BaseViewModel
+    {
         #region Properties
 
-	    public bool IsLoggedIn => Settings.IsLoggedIn;
-	    public string Name => App.Instance.CurrentPlayer != null ? App.Instance.CurrentPlayer.Name : "Not logged in!";
+        public bool IsLoggedIn => Settings.IsLoggedIn;
+        public string Name => App.Instance.CurrentPlayer != null ? App.Instance.CurrentPlayer.Name : "Not logged in!";
         public string Nickname => App.Instance.CurrentPlayer != null ? App.Instance.CurrentPlayer.Nickname : null;
         public string Email => App.Instance.CurrentPlayer != null ? App.Instance.CurrentPlayer.Email : null;
 
         #endregion
 
         public InfoViewModel()
-		{
-		}
+        {
+        }
 
         #region Commands
 
@@ -31,7 +31,7 @@ namespace IsiiSports.ViewModels
         #endregion
 
         #region Methods
-     
+
         private async Task ExecuteLogoutCommand()
         {
             try
@@ -41,12 +41,17 @@ namespace IsiiSports.ViewModels
 
                 IsBusy = true;
 
-                Settings.AccessToken = null;
-                Settings.AzureAuthToken = null;
-                Settings.AzureUserId = null;
-                Settings.RefreshToken = null;
+                var confirm = await UserDialogs.Instance.ConfirmAsync("Sei siciuro di volere uscire?", "Attenzione!");
 
-                CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.LoginContainer);
+                if (confirm)
+                {
+                    var loggedOut = await AzureService.LogoutAsync();
+
+                    if(loggedOut)
+                        CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.LoginContainer);
+                    else
+                        await UserDialogs.Instance.AlertAsync("Errore durante il logout...", "Error", "OK");
+                }
             }
             catch (Exception)
             {

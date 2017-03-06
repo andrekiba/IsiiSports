@@ -49,12 +49,12 @@ namespace IsiiSports.ViewModels
                 if (loggedIn)
                     CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.MainContainer);
                 else
-                    await UserDialogs.Instance.AlertAsync("Error", "Errore durante il login...", "OK");
+                    await UserDialogs.Instance.AlertAsync("Errore durante il login...", "Error");
 
             }
             catch (Exception)
             {
-                await UserDialogs.Instance.AlertAsync("Error", "Errore durante il login...", "OK");
+                await UserDialogs.Instance.AlertAsync("Errore durante il login...", "Error");
             }
             finally
             {

@@ -16,5 +16,6 @@ namespace IsiiSports.Interfaces
         Task<bool> SyncAllAsync();
         Task DropEverythingAsync();
 		Task<bool> LoginAsync(string authProvider = null);
+        Task<bool> LogoutAsync();
     }
 }

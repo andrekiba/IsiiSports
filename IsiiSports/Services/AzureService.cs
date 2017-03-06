@@ -130,14 +130,16 @@ namespace IsiiSports.Services
                 {
                     MobileServiceAuthenticationToken = Settings.AzureAuthToken
                 };
+
+                return true;
             }
 
             var auth = DependencyService.Get<IAuthentication>();
 
-			if (!string.IsNullOrEmpty(authProvider)) 
-				Settings.AuthProvider = authProvider;			
+            if (!string.IsNullOrEmpty(authProvider))
+                Settings.AuthProvider = authProvider;
 
-			var authUser = await auth.LoginAsync(Client, Settings.AuthProvider);
+            var authUser = await auth.LoginAsync(Client, Settings.AuthProvider);
 
             if (authUser != null)
             {
@@ -146,7 +148,7 @@ namespace IsiiSports.Services
                 Settings.AzureAuthToken = authUser.MobileServiceUser.MobileServiceAuthenticationToken;
                 Settings.AzureUserId = authUser.MobileServiceUser.UserId;
                 Settings.AccessToken = Settings.AuthProvider == MobileServiceAuthenticationProvider.Google.ToString() ? authUser.GoogleUser.AccessToken : authUser.FacebookUser.AccessToken;
-                //Settings.RefreshToken = Settings.AuthProvider == "Google" ?
+                //Settings.RefreshToken = Settings.AuthProvider == MobileServiceAuthenticationProvider.Google.ToString() ? authUser.GoogleUser.AccessToken : authUser.FacebookUser.AccessToken;
                 Settings.UserId = Settings.AuthProvider == MobileServiceAuthenticationProvider.Google.ToString() ? authUser.GoogleUser.UserId : authUser.FacebookUser.UserId;
 
                 return true;
@@ -154,12 +156,34 @@ namespace IsiiSports.Services
 
             AuthUser = null;
             Settings.AuthProvider = null;
-            Settings.AzureAuthToken = string.Empty;
-            Settings.AzureUserId = string.Empty;
-            Settings.AccessToken = string.Empty;
+            Settings.AzureAuthToken = null;
+            Settings.AzureUserId = null;
+            Settings.AccessToken = null;
+            Settings.RefreshToken = null;
             Settings.UserId = string.Empty;
 
             return false;
+        }
+
+        public async Task<bool> LogoutAsync()
+        {
+            await InitializeAsync();
+
+            var auth = DependencyService.Get<IAuthentication>();
+
+            var loggedOut = await auth.LogoutAsync(Client, Settings.AuthProvider);
+
+            if (loggedOut)
+            {
+                Settings.AuthProvider = null;
+                Settings.AzureAuthToken = null;
+                Settings.AzureUserId = null;
+                Settings.AccessToken = null;
+                Settings.RefreshToken = null;
+                Settings.UserId = string.Empty;
+            }
+
+            return loggedOut;
         }
 
         #endregion

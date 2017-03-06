@@ -22,6 +22,7 @@ using Plugin.CurrentActivity;
 using Xamarin.Facebook;
 using Xamarin.Facebook.Login;
 using Xamarin.Forms;
+using Debug = System.Diagnostics.Debug;
 using HttpMethod = Xamarin.Facebook.HttpMethod;
 
 [assembly: Dependency(typeof(AuthDroid))]
@@ -82,10 +83,38 @@ namespace IsiiSports.Droid.Auth
             }
             catch (Exception ex)
             {
-                
+                Debug.WriteLine(ex.Message);
             }
 
             return null;
+        }
+
+        public async Task<bool> LogoutAsync(IMobileServiceClient client, string provider)
+        {
+            try
+            {
+                var authProvider = (MobileServiceAuthenticationProvider)Enum.Parse(typeof(MobileServiceAuthenticationProvider), provider);
+
+                if (authProvider == MobileServiceAuthenticationProvider.Facebook)
+                {
+                    LogoutFacebook();
+                }
+
+                if (authProvider == MobileServiceAuthenticationProvider.Google)
+                {
+                    LogoutGoogle();
+                }
+
+                await client.LogoutAsync();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            return false;
         }
 
         public virtual async Task<bool> RefreshUser(IMobileServiceClient client)
@@ -231,6 +260,11 @@ namespace IsiiSports.Droid.Auth
             }
         }
 
+        public void LogoutFacebook()
+        {
+            LoginManager.Instance.LogOut();
+        }
+
         #endregion
 
         #region Google Client Flow
@@ -362,6 +396,11 @@ namespace IsiiSports.Droid.Auth
                 var c = HandleConnectionFailed;
                 c?.Invoke(result);
             }
+        }
+
+        public void LogoutGoogle()
+        {
+            SharedGoogleApiClient.Instance.GoogleApiClient.Disconnect();
         }
 
         #endregion
