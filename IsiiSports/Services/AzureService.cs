@@ -60,7 +60,8 @@ namespace IsiiSports.Services
             
                 Client = new MobileServiceClient(Keys.AppUrl, new AuthHandler());
 
-                if (!string.IsNullOrWhiteSpace (Settings.AzureAuthToken) && !string.IsNullOrWhiteSpace (Settings.AzureUserId)) {
+                if (!string.IsNullOrWhiteSpace (Settings.AzureAuthToken) && !string.IsNullOrWhiteSpace (Settings.AzureUserId))
+				{
                     Client.CurrentUser = new MobileServiceUser(Settings.AzureUserId)
                     {
                         MobileServiceAuthenticationToken = Settings.AzureAuthToken
@@ -144,13 +145,48 @@ namespace IsiiSports.Services
 
             if (authUser != null)
             {
-                AuthUser = authUser;
+				//vedo se devo creare il player oppure no
+				//if (App.Instance.CurrentPlayer == null)
+				//{
+				//	var player = await PlayerStore.GetPlayerByMail(authUser.UserInfo.Email);
+				//	if (player != null)
+				//	{
+				//		App.Instance.CurrentPlayer = player;
+				//		Settings.PlayerId = player.Id;
+				//	}
+				//	else
+				//	{ 
+				//		var newPlayer = new Player
+				//		{
+				//			Id = authUser.UserInfo.UserId,
+				//			Name = authUser.UserInfo.UserName,
+				//			Email = authUser.UserInfo.Email,
+				//			ProfileImageUrl = authUser.UserInfo.ProfileImageUrl,
 
+				//		};
+				//		await PlayerStore.InsertAsync(newPlayer);
+				//		App.Instance.CurrentPlayer = newPlayer;
+				//		Settings.PlayerId = newPlayer.Id;
+				//	}
+				//}
+
+				var newPlayer = new Player
+				{
+					Id = authUser.UserInfo.UserId,
+					Name = authUser.UserInfo.UserName,
+					Email = authUser.UserInfo.Email,
+					ProfileImageUrl = authUser.UserInfo.ProfileImageUrl,
+
+				};
+				App.Instance.CurrentPlayer = newPlayer;
+				Settings.PlayerId = newPlayer.Id;
+
+				AuthUser = authUser;
                 Settings.AzureAuthToken = authUser.MobileServiceUser.MobileServiceAuthenticationToken;
                 Settings.AzureUserId = authUser.MobileServiceUser.UserId;
-                Settings.AccessToken = Settings.AuthProvider == MobileServiceAuthenticationProvider.Google.ToString() ? authUser.GoogleUser.AccessToken : authUser.FacebookUser.AccessToken;
-                //Settings.RefreshToken = Settings.AuthProvider == MobileServiceAuthenticationProvider.Google.ToString() ? authUser.GoogleUser.AccessToken : authUser.FacebookUser.AccessToken;
-                Settings.UserId = Settings.AuthProvider == MobileServiceAuthenticationProvider.Google.ToString() ? authUser.GoogleUser.UserId : authUser.FacebookUser.UserId;
+                Settings.AccessToken = authUser.AccessToken;
+                Settings.RefreshToken = authUser.RefreshToken;
+                Settings.UserId = authUser.UserInfo.UserId;
 
                 return true;
             }
@@ -161,7 +197,7 @@ namespace IsiiSports.Services
             Settings.AzureUserId = null;
             Settings.AccessToken = null;
             Settings.RefreshToken = null;
-            Settings.UserId = string.Empty;
+            Settings.UserId = null;
 
             return false;
         }
@@ -181,7 +217,7 @@ namespace IsiiSports.Services
                 Settings.AzureUserId = null;
                 Settings.AccessToken = null;
                 Settings.RefreshToken = null;
-                Settings.UserId = string.Empty;
+                Settings.UserId = null;
             }
 
             return loggedOut;

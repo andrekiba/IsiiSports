@@ -41,8 +41,7 @@
     </Compile>
     <Compile Include="Auth\AuthHandler.cs" />
     <Compile Include="Auth\AuthUser.cs" />
-    <Compile Include="Auth\FacebookUser.cs" />
-    <Compile Include="Auth\GoogleUser.cs" />
+    <Compile Include="Auth\UserInfo.cs" />
     <Compile Include="Auth\IAuthentication.cs" />
     <Compile Include="Base\BottomBarTabbedNavigationContainer.cs" />
     <Compile Include="Base\Keys.cs" />
@@ -103,6 +102,7 @@
     </Compile>
     <Compile Include="ViewModels\InfoViewModel.cs" />
     <Compile Include="Base\BottomBarTabbedFoNavigationContainer.cs" />
+    <Compile Include="Base\Messages.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainPage.xaml">
@@ -276,9 +276,6 @@
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Cells\" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\LoginPage.xaml">

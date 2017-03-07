@@ -21,12 +21,31 @@ namespace IsiiSports.ViewModels
 
         public InfoViewModel()
         {
+			MessagingCenter.Subscribe<App>(this, Messages.UserLoggedIn, (app) =>
+			{
+				if (App.Instance.CurrentPlayer != null)
+				{
+					RaisePropertyChanged(null);
+				}
+
+				Device.BeginInvokeOnMainThread(() =>
+				{
+					MessagingCenter.Unsubscribe<App>(this, Messages.UserLoggedIn);
+				});
+			});
         }
 
         #region Commands
 
         private ICommand logoutCommand;
-        public ICommand LogoutCommand => logoutCommand ?? (logoutCommand = new Command(async () => await ExecuteLogoutCommand(), () => IsNotBusy && IsLoggedIn));
+		public ICommand LogoutCommand => logoutCommand ?? 
+			(logoutCommand = new DependentCommand(
+				async () => await ExecuteLogoutCommand(),
+				() => IsNotBusy && IsLoggedIn,
+				this,
+				() => IsNotBusy, () => IsLoggedIn)
+		    );
+
 
         #endregion
 
@@ -41,7 +60,7 @@ namespace IsiiSports.ViewModels
 
                 IsBusy = true;
 
-                var confirm = await UserDialogs.Instance.ConfirmAsync("Sei siciuro di volere uscire?", "Attenzione!");
+                var confirm = await UserDialogs.Instance.ConfirmAsync("Sei sicuro di volere uscire?", "Attenzione!");
 
                 if (confirm)
                 {

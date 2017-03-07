@@ -5,7 +5,8 @@ namespace IsiiSports.Auth
     public class AuthUser
     {
         public MobileServiceUser MobileServiceUser { get; set; }
-        public GoogleUser GoogleUser { get; set; }
-        public FacebookUser FacebookUser { get; set; }
+        public UserInfo UserInfo { get; set; }
+        public string AccessToken { get; set; }
+        public string RefreshToken { get; set; }
     }
 }

@@ -39,10 +39,6 @@ namespace IsiiSports
 			mainContainer.AddTab<GamesViewModel>("Games", Device.OnPlatform("games.png", "games.png", ""));
 			mainContainer.AddTab<TeamsViewModel>("Teams", Device.OnPlatform("teams.png", "teams.png", ""));
 			mainContainer.AddTab<InfoViewModel>("Info", Device.OnPlatform("info.png", "inof.png", ""));
-            //mainContainer.AddTab<InfoViewModel>("Info1", Device.OnPlatform("", "", ""));
-
-            mainContainer.FirstTabbedPage.BarTheme = BottomBarPage.BarThemeTypes.Light;
-			mainContainer.FirstTabbedPage.FixedMode = false;
 
 			var tabs = mainContainer.TabbedPages.ToList();
 			tabs[0].SetTabColor(null);

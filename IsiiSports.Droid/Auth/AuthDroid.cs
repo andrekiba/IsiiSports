@@ -2,18 +2,13 @@ using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Net.Http.Headers;
-using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
-using Android.Content;
-using Android.Gms.Auth;
 using Android.Gms.Auth.Api.SignIn;
-using Android.Gms.Common;
-using Android.Gms.Common.Apis;
-using Android.Gms.Plus;
 using Android.OS;
 using Android.Runtime;
 using IsiiSports.Auth;
+using IsiiSports.Base;
 using IsiiSports.Droid.Auth;
 using IsiiSports.Droid.Base;
 using IsiiSports.Helpers;
@@ -45,30 +40,39 @@ namespace IsiiSports.Droid.Auth
 
                     JObject jToken = null;
 
-
                     if (authProvider == MobileServiceAuthenticationProvider.Facebook)
                     {
-                        var facebookUser = await LoginFacebookAsync();
-                        authUser.FacebookUser = facebookUser;
+                        var loginResult = await LoginFacebookAsync();
+                        authUser.UserInfo = await GetFacebookProfileAsync(loginResult.AccessToken.Token);
+                        authUser.AccessToken = loginResult.AccessToken.Token;
+                        //authUser.RefreshToken = ...
 
                         jToken = JObject.FromObject(new
                         {
-                            access_token = facebookUser.AccessToken,
-                            //authorization_code = googleUser.ServerAuthCode,
-                            //id_token = googleUser.Authentication.IdToken,
+                            access_token = loginResult.AccessToken.Token,
+                            //authorization_code = ...,
+                            //id_token = ...,
                         });
                     }
 
                     if (authProvider == MobileServiceAuthenticationProvider.Google)
                     {
-                        var googleUser = await LoginGoogleAsync();
-                        authUser.GoogleUser = googleUser;
-
+                        var account = await LoginGoogleAsync();
+                        authUser.UserInfo = new UserInfo
+                        {
+                            UserId = account.Id,
+                            Email = account.Email,
+                            UserName = account.DisplayName,
+                            ProfileImageUrl = account.PhotoUrl.Path
+                        };
+                        authUser.AccessToken = account.IdToken;
+                        //authUser.RefreshToken = ...
+                        
                         jToken = JObject.FromObject(new
                         {
-                            access_token = googleUser.AccessToken,
-                            authorization_code = googleUser.ServerAuthCode,
-                            id_token = googleUser.IdToken
+                            access_token = account.IdToken,
+                            authorization_code = account.ServerAuthCode,
+                            id_token = account.IdToken
                         });
                     }
 
@@ -81,14 +85,15 @@ namespace IsiiSports.Droid.Auth
                     #region Server Flow
 
                     authUser.MobileServiceUser = await client.LoginAsync(Forms.Context, authProvider, new Dictionary<string, string> { { "access_type", "offline" } });
+                    await SetIdentityValues(authUser);
 
                     if (authProvider == MobileServiceAuthenticationProvider.Facebook)
                     {
-                        authUser.FacebookUser = await GetFacebookProfileAsync(authUser.MobileServiceUser.MobileServiceAuthenticationToken);
+                        authUser.UserInfo = await GetFacebookProfileAsync(authUser.AccessToken);
                     }
                     if (authProvider == MobileServiceAuthenticationProvider.Google)
                     {
-                        authUser.GoogleUser = await GetGoogleProfileAsync(authUser.MobileServiceUser.MobileServiceAuthenticationToken);
+                        authUser.UserInfo = await GetGoogleProfileAsync(authUser.AccessToken);
                     }
 
                     #endregion
@@ -176,22 +181,42 @@ namespace IsiiSports.Droid.Auth
             }
         }
 
+        private static async Task SetIdentityValues(AuthUser user)
+        {
+            //Manually calling /.auth/me against remote server because InvokeApiAsync against a local instance of Azure will never hit the remote endpoint
+            //If you are not debugging your service locally, you can just use InvokeApiAsync("/.auth/me") 
+            JToken identity;
+            using (var client = new HttpClient(new NativeMessageHandler()))
+            {
+                client.DefaultRequestHeaders.Add("ZUMO-API-VERSION", "2.0.0");
+                client.DefaultRequestHeaders.Add("X-ZUMO-AUTH", user.MobileServiceUser.MobileServiceAuthenticationToken);
+                var json = await client.GetStringAsync($"{Keys.AppUrl}/.auth/me");
+                identity = JsonConvert.DeserializeObject<JToken>(json);
+            }
+
+            if (identity != null)
+            {
+                user.AccessToken = identity[0].Value<string>("access_token");
+                user.RefreshToken = identity[0].Value<string>("refresh_token");
+            }
+        }
+
         #region Facebook Client Flow
 
-        public async Task<FacebookUser> LoginFacebookAsync()
+        public async Task<LoginResult> LoginFacebookAsync()
         {
-            var facebookLoginTcs = new TaskCompletionSource<FacebookUser>();
+            var facebookLoginTcs = new TaskCompletionSource<LoginResult>();
 
             var callbackManager = CallbackManagerFactory.Create();
             var facebookCallback = new FacebookCallback<LoginResult>
             {
-                HandleSuccess = async loginResult =>
+                HandleSuccess = loginResult =>
                 {
                     if (loginResult.AccessToken != null)
                     {
-                        var facebookUser = await GetFacebookProfileInfo(loginResult.AccessToken);
-
-                        facebookLoginTcs.TrySetResult(facebookUser);
+                        
+                       
+                        facebookLoginTcs.TrySetResult(loginResult);
                     }
                     else
                     {
@@ -219,36 +244,6 @@ namespace IsiiSports.Droid.Auth
             return await facebookLoginTcs.Task;
         }
 
-        private static async Task<FacebookUser> GetFacebookProfileInfo(AccessToken token)
-        {
-            FacebookUser userProfile;
-            var taskCompletionSource = new TaskCompletionSource<FacebookUser>();
-            var parameters = new Bundle();
-            parameters.PutString("fields", "name,email,picture.type(large)");
-
-            var response = new FacebookGraphResponse
-            {
-                HandleSuccess = result =>
-                {
-                    userProfile = new FacebookUser
-                    {
-                        AccessToken = token.Token,
-                        UserId = token.UserId,
-                        UserName = result.JSONObject.GetString("name"),
-                        Email = result.JSONObject.GetString("email"),
-                        ProfileImageUrl = result.JSONObject.GetJSONObject("picture").GetJSONObject("data").GetString("url")
-                    };
-
-                    taskCompletionSource.SetResult(userProfile);
-                }
-            };
-
-            //var graphRequest = new GraphRequest(AccessToken.CurrentAccessToken, "/" + AccessToken.CurrentAccessToken.UserId, parameters, HttpMethod.Get, response);
-            var graphRequest = new GraphRequest(token, "/" + token.UserId, parameters, Xamarin.Facebook.HttpMethod.Get, response);
-            graphRequest.ExecuteAsync();
-            return await taskCompletionSource.Task;
-        }
-
         private class FacebookCallback<TResult> : Java.Lang.Object, IFacebookCallback where TResult : Java.Lang.Object
         {
             public Action HandleCancel { private get; set; }
@@ -274,17 +269,6 @@ namespace IsiiSports.Droid.Auth
             }
         }
 
-        private class FacebookGraphResponse : Java.Lang.Object, GraphRequest.ICallback
-        {
-            public Action<GraphResponse> HandleSuccess { private get; set; }
-
-            public void OnCompleted(GraphResponse response)
-            {
-                var c = HandleSuccess;
-                c?.Invoke(response);
-            }
-        }
-
         public void LogoutFacebook()
         {
             LoginManager.Instance.LogOut();
@@ -294,9 +278,9 @@ namespace IsiiSports.Droid.Auth
 
         #region Facebook Server Flow
 
-        public async Task<FacebookUser> GetFacebookProfileAsync(string token)
+        public async Task<UserInfo> GetFacebookProfileAsync(string token)
         {
-            var facebookUser = new FacebookUser();
+            var facebookUser = new UserInfo();
 
             using (var client = new HttpClient(new NativeMessageHandler()))
             {
@@ -317,8 +301,6 @@ namespace IsiiSports.Droid.Auth
                 }
             }
 
-            facebookUser.AccessToken = token;
-
             return facebookUser;
         }
 
@@ -326,27 +308,16 @@ namespace IsiiSports.Droid.Auth
 
         #region Google Client Flow
 
-        public async Task<GoogleUser> LoginGoogleAsync()
+        public async Task<GoogleSignInAccount> LoginGoogleAsync()
         {
-            var googleLoginTcs = new TaskCompletionSource<GoogleUser>();
+            var googleLoginTcs = new TaskCompletionSource<GoogleSignInAccount>();
 
             SharedGoogleApiClient.Instance.HandleConnectionResult = result =>
             {
                 if (result.IsSuccess)
                 {
                     var account = result.SignInAccount;
-
-                    var googleUser = new GoogleUser
-                    {
-                        UserId = account.Id,
-                        AccessToken = account.ServerAuthCode,
-                        IdToken = account.IdToken,
-                        Email = account.Email,
-                        UserName = account.DisplayName,
-                        ProfileImageUrl = account.PhotoUrl.Path
-                    };
-
-                    googleLoginTcs.TrySetResult(googleUser);
+                    googleLoginTcs.TrySetResult(account);
                 }
                 else
                 {
@@ -373,9 +344,9 @@ namespace IsiiSports.Droid.Auth
 
         #region Google Server Flow
 
-        public async Task<GoogleUser> GetGoogleProfileAsync(string token)
+        public async Task<UserInfo> GetGoogleProfileAsync(string token)
         {
-            GoogleUser googleUser;
+            var googleUser = new UserInfo();
 
             using (var client = new HttpClient(new NativeMessageHandler()))
             {
@@ -386,15 +357,19 @@ namespace IsiiSports.Droid.Auth
                 using (var response = await client.GetAsync(url))
                 {
                     if (response.IsSuccessStatusCode)
-                        googleUser = JsonConvert.DeserializeObject<GoogleUser>(await response.Content.ReadAsStringAsync());
+                    {
+                        var o = JObject.Parse(await response.Content.ReadAsStringAsync());
+                        googleUser.UserName = o["name"].ToString();
+                        googleUser.UserId = o["id"].ToString();
+                        googleUser.Email = o["email"].ToString();
+                        googleUser.ProfileImageUrl = o["picture"].ToString();
+                    }
                     else
                     {
                         throw new Exception(string.Join(" ", (int)response.StatusCode, response.StatusCode));
-                    }   
+                    }
                 }
             }
-
-            googleUser.AccessToken = token;
 
             return googleUser;
         }

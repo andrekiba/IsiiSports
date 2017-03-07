@@ -40,8 +40,11 @@ namespace IsiiSports.ViewModels
 
             var loggedIn = await AzureService.LoginAsync(authProvider);
 
-            if (loggedIn)
-                CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.MainContainer);
+			if (loggedIn)
+			{
+				MessagingCenter.Send(App.Instance, Messages.UserLoggedIn);
+				CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.MainContainer);
+			}                
             else
                 await UserDialogs.Instance.AlertAsync("Errore durante il login...", "Error");
 

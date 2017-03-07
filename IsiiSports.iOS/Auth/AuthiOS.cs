@@ -9,6 +9,7 @@ using Facebook.CoreKit;
 using Facebook.LoginKit;
 using Google.SignIn;
 using IsiiSports.Auth;
+using IsiiSports.Base;
 using IsiiSports.iOS.Auth;
 using Microsoft.WindowsAzure.MobileServices;
 using ModernHttpClient;
@@ -16,6 +17,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xamarin.Forms;
 using Settings = IsiiSports.Helpers.Settings;
+using Task = System.Threading.Tasks.Task;
 
 [assembly: Dependency(typeof(AuthiOS))]
 namespace IsiiSports.iOS.Auth
@@ -38,17 +40,15 @@ namespace IsiiSports.iOS.Auth
                     if (authProvider == MobileServiceAuthenticationProvider.Facebook)
                     {
                         var facebookToken = await LoginFacebookAsync();
-                        authUser.FacebookUser = new FacebookUser
-                        {
-                            UserId = facebookToken.UserID,
-                            AccessToken = facebookToken.TokenString
-                        };
+                        authUser.UserInfo = await GetFacebookProfileAsync(facebookToken.TokenString);
+                        authUser.AccessToken = facebookToken.TokenString;
+                        //authUser.RefreshToken = ...
 
                         jToken = JObject.FromObject(new
                         {
                             access_token = facebookToken.TokenString,
-                            //authorization_code = googleUser.ServerAuthCode,
-                            //id_token = googleUser.Authentication.IdToken,
+                            //authorization_code = ...
+                            //id_token = ...
                         });
                     }
 
@@ -56,17 +56,15 @@ namespace IsiiSports.iOS.Auth
                     {
                         var googleUser = await LoginGoogleAsync();
 
-                        authUser.GoogleUser = new IsiiSports.Auth.GoogleUser
+                        authUser.UserInfo = new UserInfo
                         {
                             UserId = googleUser.UserID,
-                            AccessToken = googleUser.Authentication.AccessToken,
-                            IdToken = googleUser.Authentication.IdToken,
-                            ServerAuthCode = googleUser.ServerAuthCode,
                             Email = googleUser.Profile.Email,
                             UserName = googleUser.Profile.Name,
-                            ProfileImageUrl =
-                                googleUser.Profile.HasImage ? googleUser.Profile.GetImageUrl(100).AbsoluteString : null
+                            ProfileImageUrl = googleUser.Profile.HasImage ? googleUser.Profile.GetImageUrl(100).AbsoluteString : null
                         };
+                        authUser.AccessToken = googleUser.Authentication.AccessToken;
+                        authUser.RefreshToken = googleUser.Authentication.RefreshToken;
 
                         jToken = JObject.FromObject(new
                         {
@@ -85,14 +83,15 @@ namespace IsiiSports.iOS.Auth
                     #region Server Flow
 
                     authUser.MobileServiceUser = await client.LoginAsync(GetController(), authProvider, new Dictionary<string, string> { { "access_type", "offline" } });
+                    await SetIdentityValues(authUser);
 
                     if (authProvider == MobileServiceAuthenticationProvider.Facebook)
                     {
-                        authUser.FacebookUser = await GetFacebookProfileAsync(authUser.MobileServiceUser.MobileServiceAuthenticationToken);
+                        authUser.UserInfo = await GetFacebookProfileAsync(authUser.AccessToken);
                     }
                     if (authProvider == MobileServiceAuthenticationProvider.Google)
                     {
-                        authUser.GoogleUser = await GetGoogleProfileAsync(authUser.MobileServiceUser.MobileServiceAuthenticationToken);
+                        authUser.UserInfo = await GetGoogleProfileAsync(authUser.AccessToken);
                     }
 
                     #endregion
@@ -108,7 +107,6 @@ namespace IsiiSports.iOS.Auth
 
             return null;
         }
-
         public async Task<bool> LogoutAsync(IMobileServiceClient client, string provider, bool clientFlow = false)
         {
             try
@@ -144,7 +142,6 @@ namespace IsiiSports.iOS.Auth
 
             return false;
         }
-
         public virtual async Task<bool> RefreshUser(IMobileServiceClient client)
         {
             try
@@ -191,6 +188,25 @@ namespace IsiiSports.iOS.Auth
 
             return current;
         }
+        private static async Task SetIdentityValues(AuthUser user)
+        {
+            //Manually calling /.auth/me against remote server because InvokeApiAsync against a local instance of Azure will never hit the remote endpoint
+            //If you are not debugging your service locally, you can just use InvokeApiAsync("/.auth/me") 
+            JToken identity;
+            using (var client = new HttpClient(new NativeMessageHandler()))
+            {
+                client.DefaultRequestHeaders.Add("ZUMO-API-VERSION", "2.0.0");
+                client.DefaultRequestHeaders.Add("X-ZUMO-AUTH", user.MobileServiceUser.MobileServiceAuthenticationToken);
+                var json = await client.GetStringAsync($"{Keys.AppUrl}/.auth/me");
+                identity = JsonConvert.DeserializeObject<JToken>(json);
+            }
+
+            if (identity != null)
+            {
+                user.AccessToken = identity[0].Value<string>("access_token");
+                user.RefreshToken = identity[0].Value<string>("refresh_token");
+            }
+        }
 
         #region Facebook Client Flow
 
@@ -225,9 +241,9 @@ namespace IsiiSports.iOS.Auth
 
         #region Facebook Server Flow
 
-        public async Task<FacebookUser> GetFacebookProfileAsync(string token)
+        public async Task<UserInfo> GetFacebookProfileAsync(string token)
         {
-            var facebookUser = new FacebookUser();
+            var facebookUser = new UserInfo();
 
             using (var client = new HttpClient(new NativeMessageHandler()))
             {
@@ -247,8 +263,6 @@ namespace IsiiSports.iOS.Auth
                     }                   
                 }
             }
-
-            facebookUser.AccessToken = token;
 
             return facebookUser;
         }
@@ -306,9 +320,9 @@ namespace IsiiSports.iOS.Auth
 
         #region Google Server Flow
 
-        public async Task<IsiiSports.Auth.GoogleUser> GetGoogleProfileAsync(string token)
+        public async Task<UserInfo> GetGoogleProfileAsync(string token)
         {
-            IsiiSports.Auth.GoogleUser googleUser;
+            var googleUser = new UserInfo();
 
             using (var client = new HttpClient(new NativeMessageHandler()))
             {
@@ -319,15 +333,19 @@ namespace IsiiSports.iOS.Auth
                 using (var response = await client.GetAsync(url))
                 {
                     if (response.IsSuccessStatusCode)
-                        googleUser = JsonConvert.DeserializeObject<IsiiSports.Auth.GoogleUser>(await response.Content.ReadAsStringAsync());
+                    {
+                        var o = JObject.Parse(await response.Content.ReadAsStringAsync());
+                        googleUser.UserName = o["name"].ToString();
+                        googleUser.UserId = o["id"].ToString();
+                        googleUser.Email = o["email"].ToString();
+                        googleUser.ProfileImageUrl = o["picture"].ToString();
+                    }
                     else
                     {
                         throw new Exception(string.Join(" ", (int)response.StatusCode, response.StatusCode));
                     }
                 }
             }
-
-            googleUser.AccessToken = token;
 
             return googleUser;
         }
