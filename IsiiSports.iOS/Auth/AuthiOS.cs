@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Net.Http;
 using System.Threading.Tasks;
 using Facebook.CoreKit;
 using Facebook.LoginKit;
@@ -8,6 +9,8 @@ using Google.SignIn;
 using IsiiSports.Auth;
 using IsiiSports.iOS.Auth;
 using Microsoft.WindowsAzure.MobileServices;
+using ModernHttpClient;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using Xamarin.Forms;
 using Settings = IsiiSports.Helpers.Settings;
@@ -92,6 +95,8 @@ namespace IsiiSports.iOS.Auth
         {
             try
             {
+                #region Client Flow
+
                 var authProvider = (MobileServiceAuthenticationProvider)Enum.Parse(typeof(MobileServiceAuthenticationProvider), provider);
 
                 if (authProvider == MobileServiceAuthenticationProvider.Facebook)
@@ -104,7 +109,10 @@ namespace IsiiSports.iOS.Auth
                     LogoutGoogle();
                 }
 
+                #endregion
+
                 await client.LogoutAsync();
+                ClearCookies();
 
                 return true;
             }
@@ -178,21 +186,6 @@ namespace IsiiSports.iOS.Auth
 				return loginResult.Token;
 
 			throw new Exception("Facebook Client Flow Login Failed");
-            
-			//var facebookLoginTcs = new TaskCompletionSource<AccessToken>();
-
-			//loginManager.LogInWithReadPermissions(new[] { "public_profile" }, GetController(),
-   //             (loginResult, error) =>
-   //             {
-   //                 if (loginResult.Token != null)
-   //                 {
-   //                     facebookLoginTcs.TrySetResult(loginResult.Token); 
-   //                 }            
-   //                 else
-   //                     facebookLoginTcs.TrySetException(new Exception("Facebook Client Flow Login Failed"));
-   //             });
-
-   //         return await facebookLoginTcs.Task;
         }
 
         public void LogoutFacebook()
@@ -203,6 +196,31 @@ namespace IsiiSports.iOS.Auth
             };
 
             loginManager.LogOut();
+        }
+
+        #endregion
+
+        #region Facebook Server Flow
+
+        public async Task<FacebookUser> GetFacebookProfileAsync(string token)
+        {
+            var facebookUser = new FacebookUser();
+
+            using (var client = new HttpClient(new NativeMessageHandler()))
+            {
+                using (var response = await client.GetAsync("https://graph.facebook.com/v2.8/me?fields=id,name,email,picture{url}&access_token=" + token))
+                {
+                    var o = JObject.Parse(await response.Content.ReadAsStringAsync());
+                    facebookUser.UserName = o["name"].ToString();
+                    facebookUser.UserId = o["id"].ToString();
+                    facebookUser.Email = o["email"].ToString();
+                    facebookUser.ProfileImageUrl = o["picture"]["data"]["url"].ToString();
+                }
+            }
+
+            facebookUser.AccessToken = token;
+
+            return facebookUser;
         }
 
         #endregion
@@ -249,7 +267,28 @@ namespace IsiiSports.iOS.Auth
 		}
 
 		public IntPtr Handle => GetController().Handle;
-        
+
         #endregion
-	}
+
+        #region Google Server Flow
+
+        public async Task<IsiiSports.Auth.GoogleUser> GetGoogleProfileAsync(string token)
+        {
+            IsiiSports.Auth.GoogleUser googleUser;
+
+            using (var client = new HttpClient(new NativeMessageHandler()))
+            {
+                const string url = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json";
+                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+                var json = await client.GetStringAsync(url);
+                googleUser = JsonConvert.DeserializeObject<IsiiSports.Auth.GoogleUser>(json);
+            }
+
+            googleUser.AccessToken = token;
+
+            return googleUser;
+        }
+
+        #endregion
+    }
 }
