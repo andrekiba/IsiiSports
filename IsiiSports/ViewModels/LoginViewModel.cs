@@ -33,33 +33,19 @@ namespace IsiiSports.ViewModels
 
         private async Task ExecuteLoginCommand(string authProvider)
         {
-            try
-            {
-                if (IsBusy)
-                    return;
+            if (IsBusy)
+                return;
 
-                IsBusy = true;
+            IsBusy = true;
 
-                //UserDialogs.Instance.ShowLoading("Logging in...");
+            var loggedIn = await AzureService.LoginAsync(authProvider);
 
-                var loggedIn = await AzureService.LoginAsync(authProvider);
-
-                //UserDialogs.Instance.HideLoading();
-
-                if (loggedIn)
-                    CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.MainContainer);
-                else
-                    await UserDialogs.Instance.AlertAsync("Errore durante il login...", "Error");
-
-            }
-            catch (Exception)
-            {
+            if (loggedIn)
+                CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.MainContainer);
+            else
                 await UserDialogs.Instance.AlertAsync("Errore durante il login...", "Error");
-            }
-            finally
-            {
-                IsBusy = false;
-            }            
+
+            IsBusy = false;
         }
 
         #endregion

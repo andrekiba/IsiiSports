@@ -1,4 +1,5 @@
-﻿using System;
+﻿#define AUTH
+
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -55,16 +56,16 @@ namespace IsiiSports.Services
                 if (IsInitialized)
                     return;
 #if AUTH
-            UseAuth = true;
+                UseAuth = true;
             
-            Client = new MobileServiceClient(Keys.AppUrl, new AuthHandler());
+                Client = new MobileServiceClient(Keys.AppUrl, new AuthHandler());
 
-            if (!string.IsNullOrWhiteSpace (Settings.AzureAuthToken) && !string.IsNullOrWhiteSpace (Settings.AzureUserId)) {
-                Client.CurrentUser = new MobileServiceUser(Settings.AzureUserId)
-                {
-                    MobileServiceAuthenticationToken = Settings.AzureAuthToken
-                };
-            }
+                if (!string.IsNullOrWhiteSpace (Settings.AzureAuthToken) && !string.IsNullOrWhiteSpace (Settings.AzureUserId)) {
+                    Client.CurrentUser = new MobileServiceUser(Settings.AzureUserId)
+                    {
+                        MobileServiceAuthenticationToken = Settings.AzureAuthToken
+                    };
+                }
 #else
                 //Create our client
                 Client = new MobileServiceClient(Keys.AppUrl);
@@ -119,27 +120,27 @@ namespace IsiiSports.Services
         }
 
         #region Login
-        public async Task<bool> LoginAsync(string authProvider = null)
+        public async Task<bool> LoginAsync(string authProvider = null, bool clientFlow = false)
         {
             await InitializeAsync();
 
             //se ho già tutte le informazioni necessarie creo direttamente l'utente
-            if (!string.IsNullOrEmpty(Settings.AzureUserId) && !string.IsNullOrEmpty(Settings.AzureAuthToken))
-            {
-                Client.CurrentUser = new MobileServiceUser(Settings.AzureUserId)
-                {
-                    MobileServiceAuthenticationToken = Settings.AzureAuthToken
-                };
+            //if (!string.IsNullOrEmpty(Settings.AzureUserId) && !string.IsNullOrEmpty(Settings.AzureAuthToken))
+            //{
+            //    Client.CurrentUser = new MobileServiceUser(Settings.AzureUserId)
+            //    {
+            //        MobileServiceAuthenticationToken = Settings.AzureAuthToken
+            //    };
 
-                return true;
-            }
+            //    return true;
+            //}
 
             var auth = DependencyService.Get<IAuthentication>();
 
             if (!string.IsNullOrEmpty(authProvider))
                 Settings.AuthProvider = authProvider;
 
-            var authUser = await auth.LoginAsync(Client, Settings.AuthProvider);
+            var authUser = await auth.LoginAsync(Client, Settings.AuthProvider, null, clientFlow);
 
             if (authUser != null)
             {

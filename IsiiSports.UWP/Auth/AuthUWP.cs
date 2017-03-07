@@ -13,7 +13,7 @@ namespace IsiiSports.UWP.Auth
 {
     public class AuthUWP : IAuthentication
     {
-        public async Task<AuthUser> LoginAsync(IMobileServiceClient client, string provider, IDictionary<string, string> parameters = null)
+        public async Task<AuthUser> LoginAsync(IMobileServiceClient client, string provider, IDictionary<string, string> parameters = null, bool clientFlow = false)
         {
             try
             {
@@ -53,6 +53,23 @@ namespace IsiiSports.UWP.Auth
         public void ClearCookies()
         {
 
+        }
+
+        public async Task<bool> LogoutAsync(IMobileServiceClient client, string provider, bool clientFlow = false)
+        {
+            try
+            {
+                await client.LogoutAsync();
+                ClearCookies();
+
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+            }
+
+            return false;
         }
     }
 }

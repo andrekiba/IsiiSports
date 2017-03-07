@@ -1,6 +1,9 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
+using System.Net.Http.Headers;
+using System.Security.Claims;
+using System.Text;
 using System.Threading.Tasks;
 using Android.Content;
 using Android.Gms.Auth;
@@ -29,53 +32,67 @@ namespace IsiiSports.Droid.Auth
 {
     public class AuthDroid : IAuthentication
     {
-        public async Task<AuthUser> LoginAsync(IMobileServiceClient client, string provider, IDictionary<string, string> parameters = null)
+        public async Task<AuthUser> LoginAsync(IMobileServiceClient client, string provider, IDictionary<string, string> parameters = null, bool clientFlow = false)
         {
             try
             {
                 var authProvider = (MobileServiceAuthenticationProvider)Enum.Parse(typeof(MobileServiceAuthenticationProvider), Settings.AuthProvider);
                 var authUser = new AuthUser();
 
-                #region Client Flow
-
-                JObject jToken = null;
-
-
-                if (authProvider == MobileServiceAuthenticationProvider.Facebook)
+                if (clientFlow)
                 {
-                    var facebookUser = await LoginFacebookAsync();
-                    authUser.FacebookUser = facebookUser;
+                    #region Client Flow
 
-                    jToken = JObject.FromObject(new
+                    JObject jToken = null;
+
+
+                    if (authProvider == MobileServiceAuthenticationProvider.Facebook)
                     {
-                        access_token = facebookUser.AccessToken,
-                        //authorization_code = googleUser.ServerAuthCode,
-                        //id_token = googleUser.Authentication.IdToken,
-                    });
-                }
+                        var facebookUser = await LoginFacebookAsync();
+                        authUser.FacebookUser = facebookUser;
 
-                if (authProvider == MobileServiceAuthenticationProvider.Google)
+                        jToken = JObject.FromObject(new
+                        {
+                            access_token = facebookUser.AccessToken,
+                            //authorization_code = googleUser.ServerAuthCode,
+                            //id_token = googleUser.Authentication.IdToken,
+                        });
+                    }
+
+                    if (authProvider == MobileServiceAuthenticationProvider.Google)
+                    {
+                        var googleUser = await LoginGoogleAsync();
+                        authUser.GoogleUser = googleUser;
+
+                        jToken = JObject.FromObject(new
+                        {
+                            access_token = googleUser.AccessToken,
+                            authorization_code = googleUser.ServerAuthCode,
+                            id_token = googleUser.IdToken
+                        });
+                    }
+
+                    authUser.MobileServiceUser = await client.LoginAsync(authProvider, jToken);
+
+                    #endregion
+                }
+                else
                 {
-                    var googleUser = await LoginGoogleAsync();
-                    authUser.GoogleUser = googleUser;
+                    #region Server Flow
 
-                    jToken = JObject.FromObject(new
+                    authUser.MobileServiceUser = await client.LoginAsync(Forms.Context, authProvider, new Dictionary<string, string> { { "access_type", "offline" } });
+
+                    if (authProvider == MobileServiceAuthenticationProvider.Facebook)
                     {
-                        access_token = googleUser.AccessToken,
-                        authorization_code = googleUser.ServerAuthCode,
-                        id_token = googleUser.IdToken
-                    });
+                        authUser.FacebookUser = await GetFacebookProfileAsync(authUser.MobileServiceUser.MobileServiceAuthenticationToken);
+                    }
+                    if (authProvider == MobileServiceAuthenticationProvider.Google)
+                    {
+                        authUser.GoogleUser = await GetGoogleProfileAsync(authUser.MobileServiceUser.MobileServiceAuthenticationToken);
+                    }
+
+                    #endregion
                 }
-
-                authUser.MobileServiceUser = await client.LoginAsync(authProvider, jToken);
-
-                #endregion
-
-                #region Server Flow
-
-                //authUser.MobileServiceUser = await client.LoginAsync(Forms.Context, authProvider, null);
-
-                #endregion
 
                 return authUser;
 
@@ -88,22 +105,25 @@ namespace IsiiSports.Droid.Auth
             return null;
         }
 
-        public async Task<bool> LogoutAsync(IMobileServiceClient client, string provider)
+        public async Task<bool> LogoutAsync(IMobileServiceClient client, string provider, bool clientFlow = false)
         {
             try
             {
-                var authProvider = (MobileServiceAuthenticationProvider)Enum.Parse(typeof(MobileServiceAuthenticationProvider), provider);
+                #region Client Flow              
 
-                #region Client Flow
-
-                if (authProvider == MobileServiceAuthenticationProvider.Facebook)
+                if (clientFlow)
                 {
-                    LogoutFacebook();
-                }
+                    var authProvider = (MobileServiceAuthenticationProvider)Enum.Parse(typeof(MobileServiceAuthenticationProvider), provider);
 
-                if (authProvider == MobileServiceAuthenticationProvider.Google)
-                {
-                    LogoutGoogle();
+                    if (authProvider == MobileServiceAuthenticationProvider.Facebook)
+                    {
+                        LogoutFacebook();
+                    }
+
+                    if (authProvider == MobileServiceAuthenticationProvider.Google)
+                    {
+                        LogoutGoogle();
+                    }
                 }
 
                 #endregion
@@ -175,7 +195,9 @@ namespace IsiiSports.Droid.Auth
                     }
                     else
                     {
-                        facebookLoginTcs.TrySetException(new Exception("Facebook Client Flow Login Failed"));
+                        var error = new StringBuilder();
+                        error.AppendLine("Facebook Client Flow Login Failed");
+                        facebookLoginTcs.TrySetException(new Exception(error.ToString()));
                     }
                 },
                 HandleCancel = () =>
@@ -184,7 +206,11 @@ namespace IsiiSports.Droid.Auth
                 },
                 HandleError = loginError =>
                 {
-                    facebookLoginTcs.TrySetException(new Exception("Facebook Client Flow Login Failed"));
+                    var error = new StringBuilder();
+                    error.AppendLine("Facebook Client Flow Login Failed");
+                    error.AppendLine("Message: " + loginError.Message);
+                    error.AppendLine("StackTrace: " + loginError.StackTrace);
+                    facebookLoginTcs.TrySetException(new Exception(error.ToString()));
                 }
             };
             LoginManager.Instance.RegisterCallback(callbackManager, facebookCallback);
@@ -276,11 +302,18 @@ namespace IsiiSports.Droid.Auth
             {
                 using (var response = await client.GetAsync("https://graph.facebook.com/v2.8/me?fields=id,name,email,picture{url}&access_token=" + token))
                 {
-                    var o = JObject.Parse(await response.Content.ReadAsStringAsync());
-                    facebookUser.UserName = o["name"].ToString();
-                    facebookUser.UserId = o["id"].ToString();
-                    facebookUser.Email = o["email"].ToString();
-                    facebookUser.ProfileImageUrl = o["picture"]["data"]["url"].ToString();
+                    if (response.IsSuccessStatusCode)
+                    {
+                        var o = JObject.Parse(await response.Content.ReadAsStringAsync());
+                        facebookUser.UserName = o["name"].ToString();
+                        facebookUser.UserId = o["id"].ToString();
+                        facebookUser.Email = o["email"].ToString();
+                        facebookUser.ProfileImageUrl = o["picture"]["data"]["url"].ToString();
+                    }
+                    else
+                    {
+                        throw new Exception(string.Join(" ", (int)response.StatusCode, response.StatusCode));
+                    }
                 }
             }
 
@@ -317,7 +350,11 @@ namespace IsiiSports.Droid.Auth
                 }
                 else
                 {
-                    googleLoginTcs.TrySetException(new Exception("Google Client Flow Login Failed"));
+                    var error = new StringBuilder();
+                    error.AppendLine("Google Client Flow Login Failed");
+                    error.AppendLine("Status Code: " + result.Status.StatusCode.ToString());
+                    error.AppendLine("Status Message: " + result.Status.StatusMessage);
+                    googleLoginTcs.TrySetException(new Exception(error.ToString()));
                 }
             };
 
@@ -342,10 +379,19 @@ namespace IsiiSports.Droid.Auth
 
             using (var client = new HttpClient(new NativeMessageHandler()))
             {
-                const string url = "https://www.googleapis.com/oauth2/v1/userinfo?alt=json";
-                client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
-                var json = await client.GetStringAsync(url);
-                googleUser = JsonConvert.DeserializeObject<GoogleUser>(json);
+                const string url = "https://www.googleapis.com/oauth2/v2/userinfo";
+                //client.DefaultRequestHeaders.Add("Authorization", $"Bearer {token}");
+                client.DefaultRequestHeaders.Authorization = AuthenticationHeaderValue.Parse($"Bearer {token}");
+
+                using (var response = await client.GetAsync(url))
+                {
+                    if (response.IsSuccessStatusCode)
+                        googleUser = JsonConvert.DeserializeObject<GoogleUser>(await response.Content.ReadAsStringAsync());
+                    else
+                    {
+                        throw new Exception(string.Join(" ", (int)response.StatusCode, response.StatusCode));
+                    }   
+                }
             }
 
             googleUser.AccessToken = token;
