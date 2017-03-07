@@ -33,12 +33,8 @@ namespace IsiiSports
 			var loginPage = FreshPageModelResolver.ResolvePageModel<LoginViewModel>();
 			var loginContainer = new FreshNavigationContainer(loginPage, NavigationContainerNames.LoginContainer);
 
-			//var mainContainer = new FreshTabbedFONavigationContainer("ISII Sports", NavigationContainerNames.MainContainer);
-			//var mainContainer = new FreshTabbedNavigationContainer(NavigationContainerNames.MainContainer);
 			var mainContainer = new BottomBarTabbedFoNavigationContainer("ISII Sports", NavigationContainerNames.MainContainer);
-			mainContainer.AddTab<GamesViewModel>("Games", Device.OnPlatform("games.png", "games.png", ""));
-			mainContainer.AddTab<TeamsViewModel>("Teams", Device.OnPlatform("teams.png", "teams.png", ""));
-			mainContainer.AddTab<InfoViewModel>("Info", Device.OnPlatform("info.png", "inof.png", ""));
+			mainContainer.AddTab<InfoViewModel>("Info", Device.OnPlatform("info.png", "info.png", ""));
 
 			var tabs = mainContainer.TabbedPages.ToList();
 			tabs[0].SetTabColor(null);
