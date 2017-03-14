@@ -47,9 +47,6 @@
     <Compile Include="Base\Keys.cs" />
     <Compile Include="Controls\BottomBarPage.cs" />
     <Compile Include="Controls\BottomBarPageExtensions.cs" />
-    <Compile Include="Controls\ImageButton.xaml.cs">
-      <DependentUpon>ImageButton.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Controls\SportButton.cs" />
     <Compile Include="Converters\Converters.cs" />
     <Compile Include="Helpers\RandomGenerator.cs" />
@@ -283,12 +280,6 @@
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Pages\LoginPage.xaml">
-      <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Include="Controls\ImageButton.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
       <SubType>Designer</SubType>
     </EmbeddedResource>
