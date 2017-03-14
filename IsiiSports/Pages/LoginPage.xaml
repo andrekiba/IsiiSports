@@ -11,8 +11,38 @@
 	        BackgroundColor="{StaticResource GrayPrimary}"
 	        d:BindingContext="{x:Static base:DesignViewModelLocator.LoginViewModel}">
 
-    <Label Text="Welcome to Xamarin Forms!"
-		   FontSize="Large"
-           VerticalOptions="Center"
-           HorizontalOptions="Center" />
+    <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
+        <Grid.RowDefinitions>
+        	<RowDefinition Height=".2*"/>
+			<RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <StackLayout x:Name="ImageStack" Grid.Row="1" Spacing="20" VerticalOptions="Center">
+        	<plugin:CircleImage Source="logo.png" WidthRequest="250" HeightRequest="250" VerticalOptions="Center" HorizontalOptions="Center"
+                                FillColor="{StaticResource GreenLight}" BorderColor="{StaticResource GreenPrimary}" BorderThickness="6"/>
+			<Label FontSize="40" HorizontalOptions="Center" Text="ISII Sports" TextColor="{StaticResource GreenPrimary}" VerticalOptions="Center"/>
+        </StackLayout>
+        <StackLayout x:Name="ButtonStack" Grid.Row="2" HorizontalOptions="Center" VerticalOptions="Center" Spacing="15">
+            <controls:SportButton Command="{Binding LoginCommand}"
+				CommandParameter="Google"
+				HorizontalOptions="CenterAndExpand"
+				Image="google"
+				IsEnabled="{Binding IsNotBusy}"
+				Text="Login with Google"
+				WidthRequest="300"
+				HeightRequest="50"/>
+            <controls:SportButton Command="{Binding LoginCommand}"
+				CommandParameter="Facebook"
+				HorizontalOptions="CenterAndExpand"
+				Image="facebook"
+				IsEnabled="{Binding IsNotBusy}"
+				Text="Login with Facebook"
+				WidthRequest="300"
+				HeightRequest="50">
+            </controls:SportButton>
+            <Button Text="Maybe later..."
+              BackgroundColor="Transparent"
+              Command="{Binding SkipLoginCommand}"/>
+        </StackLayout>
+    </Grid>
 </ContentPage>
