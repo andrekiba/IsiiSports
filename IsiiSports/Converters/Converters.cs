@@ -97,6 +97,8 @@ namespace IsiiSports.Converters
     {
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
+            if (string.IsNullOrWhiteSpace(value?.ToString()))
+                return "<>";
             var words = value.ToString().Split(' ').Take(2);
             return words.Aggregate("", (current, word) => current + word[0]);
         }

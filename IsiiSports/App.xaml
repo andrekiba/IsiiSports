@@ -85,7 +85,7 @@
                 <Setter Property="FontSize"
                         Value="Medium" />
                 <Setter Property="BackgroundColor"
-                        Value="{StaticResource GreenLight}" />
+                        Value="{StaticResource GreenPrimary}" />
             </Style>
             <Style TargetType="Button"
                    BasedOn="{StaticResource ButtonStyle}" />
