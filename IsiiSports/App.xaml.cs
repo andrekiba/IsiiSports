@@ -44,10 +44,12 @@ namespace IsiiSports
 			//tabs[2].SetTabColor((Color)Resources["RedPrimary"]);               
 
 
-            if (Settings.IsLoggedIn)
-			    MainPage = mainContainer;
-			else
-			 	MainPage = loginContainer;
+          	//if (Settings.IsLoggedIn)
+			//    MainPage = mainContainer;
+			//else
+			// 	MainPage = loginContainer;
+			
+			MainPage = mainContainer;
 		}
 
 		private static void SetupIoC()

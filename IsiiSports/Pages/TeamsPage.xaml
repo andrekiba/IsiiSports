@@ -11,62 +11,9 @@
              BackgroundColor="#e6e6e6"
              x:Class="IsiiSports.Pages.TeamsPage">
 
-    <ContentPage.Resources>
-        <ResourceDictionary>
-            <converters:NameToInitialsConverter x:Key="NameToInitialsConverter" />
-            <converters:RandomColorConverter x:Key="RandomColorConverter" />
-        </ResourceDictionary>
-    </ContentPage.Resources>
-
-    <Grid HorizontalOptions="Fill" VerticalOptions="Fill">
-        <ListView x:Name="TeamsList"
-                  ItemsSource="{Binding Teams}"
-                  HorizontalOptions="Fill"
-                  VerticalOptions="Fill"
-                  base:ListViewItemTappedAttached.Command="{Binding ItemTappedCommand}"
-                  RowHeight="120"
-                  IsRefreshing="{Binding IsBusy, Mode=OneWay}"
-                  RefreshCommand="{Binding LoadTeamsCommand}">
-            <ListView.ItemTemplate>
-                <DataTemplate>
-                    <ViewCell>                        
-                        <Grid BackgroundColor="White" Margin="6,6,6,0">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="Auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid Grid.Column="0" Margin="8,4,4,4" >
-                                <plugin:CircleImage WidthRequest="65"
-			                                      	HeightRequest="65"
-			                                      	VerticalOptions="Center"
-			                                      	HorizontalOptions="Center"
-			                                      	FillColor="{Binding Converter={StaticResource RandomColorConverter}}" />
-                                <Label Text="{Binding Name, Converter={StaticResource NameToInitialsConverter}}"
-	                                   VerticalTextAlignment="Center"
-	                                   HorizontalTextAlignment="Center"
-	                                   TextColor="White"
-	                                   FontSize="20" />
-                            </Grid>
-                            <Grid Grid.Column="1">
-                                <Grid.RowDefinitions>
-                                    <RowDefinition Height="*" />
-                                    <RowDefinition Height="*" />
-                                </Grid.RowDefinitions>
-                                <Label Text="{Binding Name}"
-                                       TextColor="{StaticResource AsphaltPrimary}"
-                                       FontSize="20"
-                                       Grid.Row="0"
-                                       VerticalOptions="End" />
-                                <Label Text="{Binding Description}"
-                                       TextColor="{StaticResource GrayMedium}"
-                                       FontSize="16"
-                                       Grid.Row="1"
-                                       VerticalOptions="Start" />
-                            </Grid>
-                        </Grid>                        
-                    </ViewCell>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
-    </Grid>
+    <Label Text="Teams"
+		   FontSize="Large"
+           VerticalOptions="Center"
+           HorizontalOptions="Center" />
+	
 </ContentPage>
