@@ -17,24 +17,5 @@ namespace IsiiSports.ViewModels
         public bool IsNotBusy => !IsBusy;
 
         public string LoadingMessage { get; set; }
-
-        protected async Task DoAction(Func<Task> action)
-		{
-			Exception exception = null;
-			try
-			{
-				IsBusy = true;
-				await action();
-				IsBusy = false;
-			}
-			catch (Exception ex)
-			{
-				exception = ex;
-				IsBusy = false;
-			}
-
-			if (exception != null)
-				await CoreMethods.DisplayAlert("Ops", "Error", "OK");
-		}
     }
 }
