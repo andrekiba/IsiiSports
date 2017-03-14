@@ -187,6 +187,8 @@ namespace IsiiSports.Services
                 Settings.AccessToken = authUser.AccessToken;
                 Settings.RefreshToken = authUser.RefreshToken;
                 Settings.UserId = authUser.UserInfo.UserId;
+                Settings.PlayerEmail = authUser.UserInfo.Email;
+                Settings.UserFullName = authUser.UserInfo.UserName;
 
                 return true;
             }
@@ -198,6 +200,8 @@ namespace IsiiSports.Services
             Settings.AccessToken = null;
             Settings.RefreshToken = null;
             Settings.UserId = null;
+            Settings.PlayerEmail = null;
+            Settings.UserFullName = null;
 
             return false;
         }

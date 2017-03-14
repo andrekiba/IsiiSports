@@ -1,0 +1,70 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             mc:Ignorable="d"
+             xmlns:base="clr-namespace:IsiiSports.Base;assembly=IsiiSports"
+             xmlns:converters="clr-namespace:IsiiSports.Converters;assembly=IsiiSports"
+             xmlns:plugin="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
+             x:Class="IsiiSports.Pages.PlayerCreationPage"
+             BackgroundColor="{StaticResource GrayGoogle}"
+             Title="Player"
+             d:BindingContext="{x:Static base:DesignViewModelLocator.PlayerCreationViewModel}">
+
+    <!--<ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:NameToInitialsConverter x:Key="NameToInitialsConverter" />
+            <converters:RandomColorConverter x:Key="RandomColorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+
+        <Grid Grid.Row="0"
+              x:Name="GridHeader"
+              BackgroundColor="{Binding Converter={StaticResource RandomColorConverter}}" />
+        <Grid Grid.Row="0"
+              BackgroundColor="#88000000">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+           <Grid Grid.Row="0">
+                <Grid Margin="12">
+                    <plugin:CircleImage Width="80"
+                                        Height="80"
+                                        BindingContext="{x:Reference Name=GridHeader}"
+                                        FillColor="{Binding Path=BackgroundColor}" />
+                    <Label Text="{Binding UserName, Converter={StaticResource NameToInitialsConverter}}"
+                           VerticalTextAlignment="Center"
+                           HorizontalTextAlignment="Center"
+                           Style="{DynamicResource EvolveListItemTextStyle}"
+                           TextColor="White"
+                           FontSize="24"
+                           StyleId="EventItemCircleDate" />
+                </Grid>
+            </Grid>
+            <Label Text="{Binding UserName}"
+                   VerticalTextAlignment="Center"
+                   HorizontalTextAlignment="Start"
+                   TextColor="White"
+                   Grid.Row="1"
+                   Margin="12"
+                   FontSize="18" />
+            <Label Text="{Binding Email}"
+                   VerticalTextAlignment="Center"
+                   HorizontalTextAlignment="Start"
+                   TextColor="#DDFFFFFF"
+                   Grid.Row="2"
+                   Margin="12"
+                   FontSize="18"/>
+        </Grid>
+
+    </Grid>-->
+</ContentPage>

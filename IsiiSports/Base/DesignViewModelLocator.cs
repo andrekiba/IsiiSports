@@ -17,5 +17,7 @@ namespace IsiiSports.Base
 		public static TeamViewModel TeamViewModel => teamViewModel ?? (teamViewModel = new TeamViewModel());
         private static InfoViewModel infoViewModel;
         public static InfoViewModel InfoViewModel => infoViewModel ?? (infoViewModel = new InfoViewModel());
+        private static PlayerCreationViewModel playerCreationViewModel;
+        public static PlayerCreationViewModel PlayerCreationViewModel => playerCreationViewModel ?? (playerCreationViewModel = new PlayerCreationViewModel());
     }
 }

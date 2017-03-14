@@ -31,7 +31,9 @@ namespace IsiiSports
 			SetupIoC();
 
 			var loginPage = FreshPageModelResolver.ResolvePageModel<LoginViewModel>();
+		    var playerCreationPage = FreshPageModelResolver.ResolvePageModel<PlayerCreationViewModel>();
 			var loginContainer = new FreshNavigationContainer(loginPage, NavigationContainerNames.LoginContainer);
+            var playerCreationContainer = new FreshNavigationContainer(playerCreationPage,NavigationContainerNames.PlayerCreationContainer);
 
 			//var mainContainer = new FreshTabbedFONavigationContainer("ISII Sports", NavigationContainerNames.MainContainer);
 			//var mainContainer = new FreshTabbedNavigationContainer(NavigationContainerNames.MainContainer);
@@ -45,9 +47,9 @@ namespace IsiiSports
 			tabs[1].SetTabColor(Color.FromHex("#7B1FA2"));
 			tabs[2].SetTabColor(Color.FromHex("#FF5252"));           
 
-            if (Settings.IsLoggedIn)
-			    MainPage = mainContainer;
-			else
+   //         if (Settings.IsLoggedIn)
+			//    MainPage = mainContainer;
+			//else
 			 	MainPage = loginContainer;
 		}
 
