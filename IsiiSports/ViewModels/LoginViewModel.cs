@@ -12,7 +12,40 @@ namespace IsiiSports.ViewModels
     public class LoginViewModel : BaseViewModel
     {
         #region Commands
-		       
+
+		private ICommand loginCommand;
+        public ICommand LoginCommand => loginCommand ?? (loginCommand = new Command<string>(async authProvider => await ExecuteLoginCommand(authProvider), authProvider => IsNotBusy));
+
+        private ICommand skipLoginCommand;
+        public ICommand SkipLoginCommand => skipLoginCommand ?? (skipLoginCommand = new Command(ExecuteSkipLoginCommand, () => IsNotBusy));
+
+        #endregion
+
+        #region Methods
+        private void ExecuteSkipLoginCommand()
+        {
+            CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.MainContainer);
+        }
+
+        private async Task ExecuteLoginCommand(string authProvider)
+        {
+            if (IsBusy)
+                return;
+
+            IsBusy = true;
+
+            var loggedIn = await AzureService.LoginAsync(authProvider);
+
+			if (loggedIn)
+			{
+				MessagingCenter.Send(App.Instance, Messages.UserLoggedIn);
+				CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.MainContainer);
+			}                
+            else
+                await UserDialogs.Instance.AlertAsync("Errore durante il login...", "Error");
+
+            IsBusy = false;
+        }
 
         #endregion 
     }
