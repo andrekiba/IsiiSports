@@ -30,7 +30,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
-                <Label TextColor="{StaticResource AsphaltPrimary}" Text="Name" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" Grid.Column="0"/>
+                <Label TextColor="{StaticResource AsphaltPrimary}" Text="Name:" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" Grid.Column="0"/>
                 <Label HorizontalOptions="FillAndExpand" Grid.Column="1" Text="{Binding Name}"/>
             </Grid>
 
@@ -39,7 +39,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
-                <Label TextColor="{StaticResource AsphaltPrimary}" Text="Nickname" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" Grid.Column="0"/>
+                <Label TextColor="{StaticResource AsphaltPrimary}" Text="Nickname:" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" Grid.Column="0"/>
                 <Label HorizontalOptions="FillAndExpand" Grid.Column="1" Text="{Binding Nickname}"/>
             </Grid>
 
@@ -48,7 +48,7 @@
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="2*"/>
                 </Grid.ColumnDefinitions>
-                <Label TextColor="{StaticResource AsphaltPrimary}" Text="Email" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" Grid.Column="0"/>
+                <Label TextColor="{StaticResource AsphaltPrimary}" Text="Email:" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" Grid.Column="0"/>
                 <Label HorizontalOptions="FillAndExpand" Grid.Column="1" Text="{Binding Email}"/>
             </Grid>
 

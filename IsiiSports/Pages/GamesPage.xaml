@@ -31,9 +31,7 @@
       <ListView.ItemTemplate>
         <DataTemplate>
           <ViewCell>
-            <ViewCell.View>
-              <Grid BackgroundColor="White"
-                    Margin="6,6,6,0">
+              <Grid BackgroundColor="White" Margin="6,6,6,0">
                 <Grid.ColumnDefinitions>
                   <ColumnDefinition Width="*"/>
                   <ColumnDefinition Width="1"/>
@@ -54,9 +52,7 @@
                       <Label Text="{Binding Team1.Name, Converter={StaticResource NameToInitialsConverter}}"
                              VerticalTextAlignment="Center"
                              HorizontalTextAlignment="Center"
-                             Style="{DynamicResource EvolveListItemTextStyle}"
-                             TextColor="White"
-                             StyleId="EventItemCircleDate"/>
+                             TextColor="White" />
                     </Grid>
                     <Label Text="{Binding Team1.Name}"
                            TextColor="Black"
@@ -73,9 +69,7 @@
                       <Label Text="{Binding Team2.Name, Converter={StaticResource NameToInitialsConverter}}"
                              VerticalTextAlignment="Center"
                              HorizontalTextAlignment="Center"
-                             Style="{DynamicResource EvolveListItemTextStyle}"
-                             TextColor="White"
-                             StyleId="EventItemCircleDate"/>
+                             TextColor="White" />
                     </Grid>
                     <Label Text="{Binding Team2.Name}"
                            TextColor="Black"
@@ -112,13 +106,12 @@
                          FontAttributes="Bold"/>
                   <Label Text="{Binding GameField.Name}"
                          TextColor="#2c3e50"
-                         FontSize="13"
                          Grid.Row="2"
+						 FontSize="13"
                          VerticalOptions="Center"
                          HorizontalTextAlignment="Center"/>
                 </Grid>
               </Grid>
-            </ViewCell.View>
           </ViewCell>
         </DataTemplate>
       </ListView.ItemTemplate>
