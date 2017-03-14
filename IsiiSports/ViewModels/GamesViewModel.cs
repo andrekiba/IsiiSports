@@ -38,7 +38,7 @@ namespace IsiiSports.ViewModels
         public ICommand ItemTappedCommand => itemTappedCommand ?? (itemTappedCommand = new Command(ExecuteItemTappedCommand));
         private void ExecuteItemTappedCommand(object item)
         {
-            CoreMethods.PushPageModel<GameViewModel>(item);
+            //Push GameViewModel
         }
 
         private ICommand loadGamesCommand;

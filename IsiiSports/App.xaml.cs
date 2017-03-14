@@ -39,9 +39,10 @@ namespace IsiiSports
 			mainContainer.AddTab<InfoViewModel>("Info", Device.OnPlatform("info.png", "info.png", ""));
 
 			var tabs = mainContainer.TabbedPages.ToList();
-			tabs[0].SetTabColor(Color.FromHex(Current.Resources["PurplePrimary"].ToString()));
-			tabs[1].SetTabColor(Color.FromHex(Current.Resources["GreenPrimary"].ToString()));
-			tabs[2].SetTabColor(Color.FromHex(Current.Resources["RedPrimary"].ToString()));                
+			tabs[0].SetTabColor((Color)Resources["PurplePrimary"]);
+			tabs[1].SetTabColor((Color)Resources["GreenPrimary"]);
+			tabs[2].SetTabColor((Color)Resources["RedPrimary"]);               
+
 
             if (Settings.IsLoggedIn)
 			    MainPage = mainContainer;
