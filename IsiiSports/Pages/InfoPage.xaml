@@ -5,6 +5,8 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              mc:Ignorable="d"
 			 xmlns:base="clr-namespace:IsiiSports.Base;assembly=IsiiSports"
+			 xmlns:converters="clr-namespace:IsiiSports.Converters;assembly=IsiiSports"
+			 xmlns:abstractions="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
 			 d:BindingContext="{x:Static base:DesignViewModelLocator.InfoViewModel}"
 			 x:Class="IsiiSports.Pages.InfoPage"
              BackgroundColor="#e6e6e6"
@@ -14,46 +16,89 @@
         <ToolbarItem Text="Logout" Icon="user.png" Order="Primary" Priority="0"
 					Command="{Binding LogoutCommand}" />
     </ContentPage.ToolbarItems>
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <converters:NameToInitialsConverter x:Key="NameToInitialsConverter" />
+            <converters:RandomColorConverter x:Key="RandomColorConverter" />
+        </ResourceDictionary>
+    </ContentPage.Resources>
 
-    <StackLayout Margin="12,25,12,20" Spacing="20">
-        <Label Text="Account"
-               FontSize="18"
-               Margin="12,0"
-               VerticalOptions="Center"
-               FontAttributes="Bold"
-               TextColor="{StaticResource AsphaltPrimary}" />
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
 
-        <StackLayout Margin="12,0,12,0" Spacing="20">
-
-			<Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="2*"/>
-                </Grid.ColumnDefinitions>
-                <Label TextColor="{StaticResource AsphaltPrimary}" Text="Name" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" Grid.Column="0"/>
-                <Label HorizontalOptions="FillAndExpand" Grid.Column="1" Text="{Binding Name}"/>
+        <Grid Grid.Row="0"
+              x:Name="GridHeader"
+              Margin="0,0,0,2"
+              BackgroundColor="{Binding Converter={StaticResource RandomColorConverter}}" />
+        <Grid Grid.Row="0"
+              BackgroundColor="#88000000">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Grid Grid.Row="0">
+                <Grid Margin="12,24,12,12"
+                      HorizontalOptions="Start">
+                    <abstractions:CircleImage WidthRequest="80"
+                                        HeightRequest="80"
+                                        BindingContext="{x:Reference Name=GridHeader}"
+                                        FillColor="{Binding Path=BackgroundColor}" />
+                    <Label Text="{Binding Name, Converter={StaticResource NameToInitialsConverter}}"
+                           VerticalTextAlignment="Center"
+                           HorizontalTextAlignment="Center"
+                           Style="{DynamicResource EvolveListItemTextStyle}"
+                           TextColor="White"
+                           FontSize="24"
+                           StyleId="EventItemCircleDate" />
+                </Grid>
             </Grid>
+            <Label Text="{Binding Name}"
+                   VerticalTextAlignment="Center"
+                   HorizontalTextAlignment="Start"
+                   TextColor="White"
+                   Grid.Row="1"
+                   Margin="12,0"
+                   FontSize="18" />
+            <Label Text="{Binding Email}"
+                   VerticalTextAlignment="Center"
+                   HorizontalTextAlignment="Start"
+                   TextColor="#DDFFFFFF"
+                   Grid.Row="2"
+                   Margin="12,0,12,24"
+                   FontSize="18" />
+        </Grid>
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="2*"/>
-                </Grid.ColumnDefinitions>
-                <Label TextColor="{StaticResource AsphaltPrimary}" Text="Nickname" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" Grid.Column="0"/>
-                <Label HorizontalOptions="FillAndExpand" Grid.Column="1" Text="{Binding Nickname}"/>
-            </Grid>
+        <Grid Grid.Row="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <StackLayout Grid.Row="0"
+                         Margin="12,6">
+                <Label Text="NICKNAME"
+                       FontAttributes="Bold"
+                       FontSize="17"
+                       TextColor="{StaticResource GrayMedium}" />
+                <Label Text="{Binding Nickname}"
+                       FontAttributes="Bold"
+                       FontSize="20"
+                       TextColor="{StaticResource GrayDark}"/>
 
-            <Grid>
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="2*"/>
-                </Grid.ColumnDefinitions>
-                <Label TextColor="{StaticResource AsphaltPrimary}" Text="Email" FontSize="14" FontAttributes="Bold" VerticalOptions="Center" Grid.Column="0"/>
-                <Label HorizontalOptions="FillAndExpand" Grid.Column="1" Text="{Binding Email}"/>
-            </Grid>
+                <Label Text="DESCRIPTION"
+                       FontAttributes="Bold"
+                       FontSize="17"
+                       Margin="0,12,0,0"
+                       TextColor="{StaticResource GrayMedium}" />
+                <Label Text="{Binding Description}"
+                       FontAttributes="Bold"
+                       FontSize="20"
+                       TextColor="{StaticResource GrayDark}"/>
+            </StackLayout>
+        </Grid>
 
-        </StackLayout>
-
-    </StackLayout>
-
+    </Grid>
 </ContentPage>

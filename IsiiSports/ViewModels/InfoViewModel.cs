@@ -13,9 +13,10 @@ namespace IsiiSports.ViewModels
         #region Properties
 
         public bool IsLoggedIn => Settings.IsLoggedIn;
-        public string Name => App.Instance.CurrentPlayer != null ? App.Instance.CurrentPlayer.Name : "Not logged in!";
-        public string Nickname => App.Instance.CurrentPlayer != null ? App.Instance.CurrentPlayer.Nickname : null;
-        public string Email => App.Instance.CurrentPlayer != null ? App.Instance.CurrentPlayer.Email : null;
+        public string Name => App.Instance.CurrentPlayer != null ? App.Instance.CurrentPlayer.Name : "Test Name";
+        public string Nickname => App.Instance.CurrentPlayer != null ? App.Instance.CurrentPlayer.Nickname : "TestNickname";
+        public string Description => App.Instance.CurrentPlayer != null ? App.Instance.CurrentPlayer.Description : "TestDescription";
+        public string Email => App.Instance.CurrentPlayer != null ? App.Instance.CurrentPlayer.Email : "TestEmail";
 
         #endregion
 
