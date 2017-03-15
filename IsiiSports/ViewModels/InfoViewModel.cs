@@ -22,29 +22,28 @@ namespace IsiiSports.ViewModels
 
         public InfoViewModel()
         {
-			MessagingCenter.Subscribe<App>(this, Messages.UserLoggedIn, (app) =>
-			{
-				if (App.Instance.CurrentPlayer != null)
-				{
-					RaisePropertyChanged(null);
-				}
+          MessagingCenter.Subscribe<App>(this, Messages.UserLoggedIn, (app) =>
+          {
+            if (App.Instance.CurrentPlayer != null)
+            {
+              RaisePropertyChanged(null);
+            }
 
-				Device.BeginInvokeOnMainThread(() =>
-				{
-					MessagingCenter.Unsubscribe<App>(this, Messages.UserLoggedIn);
-				});
-			});
+            Device.BeginInvokeOnMainThread(() =>
+            {
+              MessagingCenter.Unsubscribe<App>(this, Messages.UserLoggedIn);
+            });
+          });
         }
 
         #region Commands
 
         private ICommand logoutCommand;
-		public ICommand LogoutCommand => logoutCommand ?? 
-			(logoutCommand = new DependentCommand(
-				async () => await ExecuteLogoutCommand(),
-				() => IsNotBusy && IsLoggedIn,
-				this,
-				() => IsNotBusy, () => IsLoggedIn)
+		    public ICommand LogoutCommand => logoutCommand ?? (logoutCommand = new DependentCommand( 
+          async () => await ExecuteLogoutCommand(),
+          () => IsNotBusy && IsLoggedIn,
+          this,
+          () => IsNotBusy, () => IsLoggedIn)
 		    );
 
 
