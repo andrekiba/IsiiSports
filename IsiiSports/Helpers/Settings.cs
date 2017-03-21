@@ -29,7 +29,12 @@ namespace IsiiSports.Helpers
         private static readonly string UserIdDefault = string.Empty;
         private const string PlayerIdKey = "playerId";
         private static readonly string PlayerIdDefault = string.Empty;
-
+        private const string SerializedPlayerKey = "serializedPlayer";
+        private static readonly string SerializedPlayerDefault = string.Empty;
+        private const string PlayerEmailKey = "playerEmail";
+        private static readonly string PlayerEmailDefault = string.Empty;
+        private const string UserFullNameKey = "userFullName";
+        private static readonly string UserFullNameDefault = string.Empty;
         #endregion
 
         public static string AuthProvider
@@ -117,6 +122,42 @@ namespace IsiiSports.Helpers
                     return true;
 
                 return !string.IsNullOrWhiteSpace(AzureUserId);
+            }
+        }
+
+        public static string SerializedPlayer
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault<string>(SerializedPlayerKey, SerializedPlayerDefault);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue(SerializedPlayerKey, value);
+            }
+        }
+
+        public static string PlayerEmail
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault<string>(PlayerEmailKey, PlayerEmailDefault);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue(PlayerEmailKey, value);
+            }
+        }
+
+        public static string UserFullName
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault<string>(UserFullNameKey, UserFullNameDefault);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue(UserFullNameKey, value);
             }
         }
 
