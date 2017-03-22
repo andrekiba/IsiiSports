@@ -12,7 +12,7 @@ namespace IsiiSports.ViewModels
     {
         #region Properties
 
-        public bool IsLoggedIn => Settings.IsLoggedIn;
+		public bool IsLoggedIn { get; set;}
         public string Name => App.Instance.CurrentPlayer != null ? App.Instance.CurrentPlayer.Name : "Test Name";
         public string Nickname => App.Instance.CurrentPlayer != null ? App.Instance.CurrentPlayer.Nickname : "Test Nickname";
         public string Description => App.Instance.CurrentPlayer != null ? App.Instance.CurrentPlayer.Description : "Test Description";
@@ -27,9 +27,12 @@ namespace IsiiSports.ViewModels
             {
                 Device.BeginInvokeOnMainThread(() =>
                 {
-                    if (app.CurrentPlayer != null)
-                        RaisePropertyChanged();
-                    
+					if (app.CurrentPlayer != null)
+					{
+						IsLoggedIn = Settings.IsLoggedIn;
+						//passo null per dire che tutte le prop devono essere aggiornate
+						RaisePropertyChanged(null);
+					}                
                     MessagingCenter.Unsubscribe<App>(this, Messages.UserLoggedIn);
                 });
             });
@@ -42,8 +45,10 @@ namespace IsiiSports.ViewModels
             async () => await ExecuteLogoutCommand(),
             () => IsNotBusy && IsLoggedIn,
             this,
-            () => IsNotBusy, () => IsLoggedIn)
+            () => IsLoggedIn)
         );
+
+		//public ICommand LogoutCommand => logoutCommand ?? (logoutCommand = new Command(async () => await ExecuteLogoutCommand()));
 
         #endregion
 
@@ -64,8 +69,12 @@ namespace IsiiSports.ViewModels
                 {
                     var loggedOut = await AzureService.LogoutAsync();
 
-                    if (loggedOut)
-                        CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.LoginContainer);
+					if (loggedOut)
+					{
+						App.Instance.CurrentPlayer = null;
+						RaisePropertyChanged(null);
+						CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.LoginContainer);
+					}                        
                     else
                         await UserDialogs.Instance.AlertAsync("Errore durante il logout...", "Error", "OK");
                 }

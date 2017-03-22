@@ -42,9 +42,9 @@ namespace IsiiSports
             mainContainer.AddTab<InfoViewModel>("Info", Device.OnPlatform("info.png", "info.png", ""));
 
             var tabs = mainContainer.TabbedPages.ToList();
-            tabs[0].SetTabColor(null);
-            tabs[1].SetTabColor(Color.FromHex("#7B1FA2"));
-            tabs[2].SetTabColor(Color.FromHex("#FF5252"));
+			tabs[0].SetTabColor((Color)Resources["PurplePrimary"]);
+			tabs[1].SetTabColor((Color)Resources["GreenPrimary"]);
+			tabs[2].SetTabColor(null);
 
             //se risulto già loggato
             if (Settings.IsLoggedIn)

@@ -14,7 +14,8 @@ namespace IsiiSports.ViewModels
 
         public bool IsBusy { get; set; }
 
-        public bool IsNotBusy => !IsBusy;
+        [DependsOn("IsBusy")]
+		public bool IsNotBusy => !IsBusy;
 
         public string LoadingMessage { get; set; }
     }

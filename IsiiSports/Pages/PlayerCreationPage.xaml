@@ -1,4 +1,4 @@
-﻿<?xml version="1.0" encoding="utf-8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
@@ -39,7 +39,7 @@
             <Grid Grid.Row="0">
                 <Grid Margin="12,24,12,12"
                       HorizontalOptions="Start">
-                    <plugin:CircleImage WidthRequest="80"
+                    <!--<plugin:CircleImage WidthRequest="80"
                                         HeightRequest="80"
                                         BindingContext="{x:Reference Name=GridHeader}"
                                         FillColor="{Binding Path=BackgroundColor}" />
@@ -49,7 +49,12 @@
                            Style="{DynamicResource EvolveListItemTextStyle}"
                            TextColor="White"
                            FontSize="24"
-                           StyleId="EventItemCircleDate" />
+                           StyleId="EventItemCircleDate" />-->
+					<plugin:CircleImage WidthRequest="80"
+                                        HeightRequest="80"
+                                        Source="{Binding ProfileImageUrl}" 
+										BorderColor="White"
+										BorderThickness="2"/>
                 </Grid>
             </Grid>
             <Label Text="{Binding UserName}"
