@@ -35,6 +35,8 @@ namespace IsiiSports.Helpers
         private static readonly string PlayerEmailDefault = string.Empty;
         private const string UserFullNameKey = "userFullName";
         private static readonly string UserFullNameDefault = string.Empty;
+        private const string ProfileImageUrlKey = "profileImageUrl";
+        private static readonly string ProfileImageUrlDefault = string.Empty;
         #endregion
 
         public static string AuthProvider
@@ -158,6 +160,18 @@ namespace IsiiSports.Helpers
             set
             {
                 AppSettings.AddOrUpdateValue(UserFullNameKey, value);
+            }
+        }
+
+        public static string ProfileImageUrl
+        {
+            get
+            {
+                return AppSettings.GetValueOrDefault<string>(ProfileImageUrlKey, ProfileImageUrlDefault);
+            }
+            set
+            {
+                AppSettings.AddOrUpdateValue(ProfileImageUrlKey, value);
             }
         }
 

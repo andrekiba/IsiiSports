@@ -35,10 +35,8 @@ namespace IsiiSports
             var playerCreationPage = FreshPageModelResolver.ResolvePageModel<PlayerCreationViewModel>();
             var loginContainer = new FreshNavigationContainer(loginPage, NavigationContainerNames.LoginContainer);
             var playerCreationContainer = new FreshNavigationContainer(playerCreationPage, NavigationContainerNames.PlayerCreationContainer);
-
-            //var mainContainer = new FreshTabbedFONavigationContainer("ISII Sports", NavigationContainerNames.MainContainer);
-            //var mainContainer = new FreshTabbedNavigationContainer(NavigationContainerNames.MainContainer);
-            var mainContainer = new BottomBarTabbedFoNavigationContainer("ISII Sports", NavigationContainerNames.MainContainer);
+            
+			var mainContainer = new BottomBarTabbedFoNavigationContainer("ISII Sports", NavigationContainerNames.MainContainer);
             mainContainer.AddTab<GamesViewModel>("Games", Device.OnPlatform("games.png", "games.png", ""));
             mainContainer.AddTab<TeamsViewModel>("Teams", Device.OnPlatform("teams.png", "teams.png", ""));
             mainContainer.AddTab<InfoViewModel>("Info", Device.OnPlatform("info.png", "info.png", ""));
@@ -48,14 +46,16 @@ namespace IsiiSports
             tabs[1].SetTabColor(Color.FromHex("#7B1FA2"));
             tabs[2].SetTabColor(Color.FromHex("#FF5252"));
 
+            //se risulto già loggato
             if (Settings.IsLoggedIn)
             {
-                //TODO: Controllare questa logica attentamente
                 var serializedPlayer = Settings.SerializedPlayer;
+                //se non mi sono già registrato come player
                 if (string.IsNullOrEmpty(serializedPlayer))
                     MainPage = playerCreationContainer;
                 else
                 {
+                    //se sono già un player
                     var player = JsonConvert.DeserializeObject<Player>(serializedPlayer);
                     if (player.Email == Settings.PlayerEmail)
                     {
@@ -65,6 +65,7 @@ namespace IsiiSports
                     }
                     else
                     {
+                        //altrimenti devo mostrare la pagina di login
                         MainPage = loginContainer;
                     }
                 }

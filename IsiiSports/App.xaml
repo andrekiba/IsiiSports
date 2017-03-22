@@ -4,8 +4,8 @@
              xmlns:controls="clr-namespace:IsiiSports.Controls;assembly=IsiiSports"
              x:Class="IsiiSports.App">
     <Application.Resources>
-
         <ResourceDictionary>
+            
             <Color x:Key="AsphaltPrimary">#365271</Color>
             <Color x:Key="AsphaltLight">#889DB5</Color>
             <Color x:Key="AsphaltDark">#1C2B39</Color>
@@ -37,69 +37,48 @@
 
             <Color x:Key="GrayGoogle">#E6E6E6</Color>
 
-            <Style x:Key="LabelStyle"
-                   TargetType="Label">
-                <Setter Property="TextColor"
-                        Value="{StaticResource AsphaltPrimary}" />
+            <Style x:Key="LabelStyle" TargetType="Label">
+                <Setter Property="TextColor" Value="{StaticResource AsphaltPrimary}" />
                 <Setter Property="FontSize">
                     <Setter.Value>
-                        <OnPlatform x:TypeArguments="x:Double"
-                                    iOS="14"
-                                    Android="12" />
+                        <OnPlatform x:TypeArguments="x:Double" iOS="14" Android="12" />
                     </Setter.Value>
                 </Setter>
-                <Setter Property="FontFamily"
-                        Value="SegoeUI" />
-            </Style>
-            <Style x:Key="Header"
-                   TargetType="Label"
-                   BasedOn="{StaticResource LabelStyle}">
-                <Setter Property="FontFamily"
-                        Value="SegoeUI" />
-                <Setter Property="TextColor"
-                        Value="{StaticResource AsphaltPrimary}" />
-            </Style>
-            <Style TargetType="Label"
-                   BasedOn="{StaticResource LabelStyle}" />
-            <Style x:Key="WhiteLabelStyle"
-                   TargetType="Label"
-                   BasedOn="{StaticResource LabelStyle}">
-                <Setter Property="TextColor"
-                        Value="#FFFFFF" />
-            </Style>
-            <Style x:Key="Sub"
-                   TargetType="Label"
-                   BasedOn="{StaticResource LabelStyle}">
-                <Setter Property="TextColor"
-                        Value="{StaticResource GrayDark}" />
-                <Setter Property="FontSize"
-                        Value="Small" />
+                <Setter Property="FontFamily" Value="SegoeUI" />
             </Style>
 
-            <Style x:Key="ButtonStyle"
-                   TargetType="Button">
-                <Setter Property="TextColor"
-                        Value="White" />
-                <Setter Property="BorderRadius"
-                        Value="4" />
-                <Setter Property="FontSize"
-                        Value="Medium" />
-                <Setter Property="BackgroundColor"
-                        Value="{StaticResource GreenPrimary}" />
+            <Style x:Key="Header" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+                <Setter Property="FontFamily" Value="SegoeUI" />
+                <Setter Property="TextColor" Value="{StaticResource AsphaltPrimary}" />
             </Style>
-            <Style TargetType="Button"
-                   BasedOn="{StaticResource ButtonStyle}" />
-            <Style TargetType="controls:SportButton"
-                   BasedOn="{StaticResource ButtonStyle}" />
-            <Style x:Key="DeleteButtonStyle"
-                   TargetType="Button"
-                   BasedOn="{StaticResource ButtonStyle}">
-                <Setter Property="TextColor"
-                        Value="White" />
-                <Setter Property="BackgroundColor"
-                        Value="{StaticResource RedPrimary}" />
+
+            <Style TargetType="Label" BasedOn="{StaticResource LabelStyle}" />
+
+            <Style x:Key="WhiteLabelStyle" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+                <Setter Property="TextColor" Value="#FFFFFF" />
             </Style>
+
+            <Style x:Key="Sub" TargetType="Label" BasedOn="{StaticResource LabelStyle}">
+                <Setter Property="TextColor" Value="{StaticResource GrayDark}" />
+                <Setter Property="FontSize" Value="Small" />
+            </Style>
+
+            <Style x:Key="ButtonStyle" TargetType="Button">
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="BorderRadius" Value="4" />
+                <Setter Property="FontSize" Value="Medium" />
+                <Setter Property="BackgroundColor" Value="{StaticResource GreenPrimary}" />
+            </Style>
+            
+            <Style TargetType="Button" BasedOn="{StaticResource ButtonStyle}" />
+            
+            <Style TargetType="controls:SportButton" BasedOn="{StaticResource ButtonStyle}" />
+            
+            <Style x:Key="DeleteButtonStyle" TargetType="Button" BasedOn="{StaticResource ButtonStyle}">
+                <Setter Property="TextColor" Value="White" />
+                <Setter Property="BackgroundColor" Value="{StaticResource RedPrimary}" />
+            </Style>
+            
         </ResourceDictionary>
-
     </Application.Resources>
 </Application>

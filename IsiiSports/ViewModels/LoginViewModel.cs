@@ -45,7 +45,7 @@ namespace IsiiSports.ViewModels
                 if (!string.IsNullOrEmpty(serializedPlayer))
                 {
                     var player = JsonConvert.DeserializeObject<Player>(serializedPlayer);
-                    if (player.Email == Settings.PlayerEmail) //TODO: ci sono casi in cui può capitare che questa condizione non sia soddisfatta?
+                    if (player.Email == Settings.PlayerEmail)
                     {
                         //I dati che ho nei settings sono corretti, accedo all'app
                         App.Instance.CurrentPlayer = player;
@@ -68,9 +68,6 @@ namespace IsiiSports.ViewModels
 			IsBusy = false;
 		}
 
-        /// <summary>
-        /// Naviga verso la pagina di creazione del player
-        /// </summary>
         private void NavigateToPlayerCreation()
         {
             CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.PlayerCreationContainer);

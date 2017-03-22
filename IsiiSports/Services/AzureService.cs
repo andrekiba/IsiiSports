@@ -37,8 +37,8 @@ namespace IsiiSports.Services
         public MobileServiceAuthenticationProvider AuthProvider { get; protected set; }
         public static bool UseAuth { get; protected set; } = true;
         public static string DbPath { get; set; } = "syncstore2.db";
-      
-        public IPlayerStore PlayerStore => playerStore ?? (playerStore = FreshIOC.Container.Resolve<IPlayerStore>());       
+
+        public IPlayerStore PlayerStore => playerStore ?? (playerStore = FreshIOC.Container.Resolve<IPlayerStore>());
         public ITeamStore TeamStore => teamStore ?? (teamStore = FreshIOC.Container.Resolve<ITeamStore>());
         public IGameStore GameStore => gameStore ?? (gameStore = FreshIOC.Container.Resolve<IGameStore>());
         public IGameFieldStore GameFieldStore => gameFieldStore ?? (gameFieldStore = FreshIOC.Container.Resolve<IGameFieldStore>());
@@ -57,11 +57,11 @@ namespace IsiiSports.Services
                     return;
 #if AUTH
                 UseAuth = true;
-            
+
                 Client = new MobileServiceClient(Keys.AppUrl, new AuthHandler());
 
-                if (!string.IsNullOrWhiteSpace (Settings.AzureAuthToken) && !string.IsNullOrWhiteSpace (Settings.AzureUserId))
-				{
+                if (!string.IsNullOrWhiteSpace(Settings.AzureAuthToken) && !string.IsNullOrWhiteSpace(Settings.AzureUserId))
+                {
                     Client.CurrentUser = new MobileServiceUser(Settings.AzureUserId)
                     {
                         MobileServiceAuthenticationToken = Settings.AzureAuthToken
@@ -120,21 +120,21 @@ namespace IsiiSports.Services
             return Task.FromResult(true);
         }
 
-        #region Login
+        #region Login - Logout
         public async Task<bool> LoginAsync(string authProvider = null, bool clientFlow = false)
         {
             await InitializeAsync();
 
             //se ho già tutte le informazioni necessarie creo direttamente l'utente
-            //if (!string.IsNullOrEmpty(Settings.AzureUserId) && !string.IsNullOrEmpty(Settings.AzureAuthToken))
-            //{
-            //    Client.CurrentUser = new MobileServiceUser(Settings.AzureUserId)
-            //    {
-            //        MobileServiceAuthenticationToken = Settings.AzureAuthToken
-            //    };
+            if (!string.IsNullOrEmpty(Settings.AzureUserId) && !string.IsNullOrEmpty(Settings.AzureAuthToken))
+            {
+                Client.CurrentUser = new MobileServiceUser(Settings.AzureUserId)
+                {
+                    MobileServiceAuthenticationToken = Settings.AzureAuthToken
+                };
 
-            //    return true;
-            //}
+                return true;
+            }
 
             var auth = DependencyService.Get<IAuthentication>();
 
@@ -145,67 +145,26 @@ namespace IsiiSports.Services
 
             if (authUser != null)
             {
-				//vedo se devo creare il player oppure no
-				//if (App.Instance.CurrentPlayer == null)
-				//{
-				//	var player = await PlayerStore.GetPlayerByMail(authUser.UserInfo.Email);
-				//	if (player != null)
-				//	{
-				//		App.Instance.CurrentPlayer = player;
-				//		Settings.PlayerId = player.Id;
-				//	}
-				//	else
-				//	{ 
-				//		var newPlayer = new Player
-				//		{
-				//			Id = authUser.UserInfo.UserId,
-				//			Name = authUser.UserInfo.UserName,
-				//			Email = authUser.UserInfo.Email,
-				//			ProfileImageUrl = authUser.UserInfo.ProfileImageUrl,
+                AuthUser = authUser;
 
-				//		};
-				//		await PlayerStore.InsertAsync(newPlayer);
-				//		App.Instance.CurrentPlayer = newPlayer;
-				//		Settings.PlayerId = newPlayer.Id;
-				//	}
-				//}
-
-				var newPlayer = new Player
-				{
-					Id = authUser.UserInfo.UserId,
-					Name = authUser.UserInfo.UserName,
-					Email = authUser.UserInfo.Email,
-					ProfileImageUrl = authUser.UserInfo.ProfileImageUrl,
-
-				};
-				App.Instance.CurrentPlayer = newPlayer;
-				Settings.PlayerId = newPlayer.Id;
-
-				AuthUser = authUser;
                 Settings.AzureAuthToken = authUser.MobileServiceUser.MobileServiceAuthenticationToken;
                 Settings.AzureUserId = authUser.MobileServiceUser.UserId;
                 Settings.AccessToken = authUser.AccessToken;
                 Settings.RefreshToken = authUser.RefreshToken;
+
                 Settings.UserId = authUser.UserInfo.UserId;
                 Settings.PlayerEmail = authUser.UserInfo.Email;
                 Settings.UserFullName = authUser.UserInfo.UserName;
+                Settings.ProfileImageUrl = authUser.UserInfo.ProfileImageUrl;
 
                 return true;
             }
 
             AuthUser = null;
-            Settings.AuthProvider = null;
-            Settings.AzureAuthToken = null;
-            Settings.AzureUserId = null;
-            Settings.AccessToken = null;
-            Settings.RefreshToken = null;
-            Settings.UserId = null;
-            Settings.PlayerEmail = null;
-            Settings.UserFullName = null;
+            ClearSettings();
 
             return false;
         }
-
         public async Task<bool> LogoutAsync()
         {
             await InitializeAsync();
@@ -215,16 +174,22 @@ namespace IsiiSports.Services
             var loggedOut = await auth.LogoutAsync(Client, Settings.AuthProvider);
 
             if (loggedOut)
-            {
-                Settings.AuthProvider = null;
-                Settings.AzureAuthToken = null;
-                Settings.AzureUserId = null;
-                Settings.AccessToken = null;
-                Settings.RefreshToken = null;
-                Settings.UserId = null;
-            }
+                ClearSettings();
 
             return loggedOut;
+        }
+        private static void ClearSettings()
+        {
+            Settings.AuthProvider = null;
+            Settings.AzureAuthToken = null;
+            Settings.AzureUserId = null;
+            Settings.AccessToken = null;
+            Settings.RefreshToken = null;
+            Settings.UserId = null;
+            Settings.PlayerEmail = null;
+            Settings.UserFullName = null;
+            Settings.ProfileImageUrl = null;
+            Settings.SerializedPlayer = null;
         }
 
         #endregion

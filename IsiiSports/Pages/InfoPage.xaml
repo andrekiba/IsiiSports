@@ -6,7 +6,7 @@
              mc:Ignorable="d"
              xmlns:base="clr-namespace:IsiiSports.Base;assembly=IsiiSports"
              xmlns:converters="clr-namespace:IsiiSports.Converters;assembly=IsiiSports"
-             xmlns:abstractions="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
+             xmlns:plugin="clr-namespace:ImageCircle.Forms.Plugin.Abstractions;assembly=ImageCircle.Forms.Plugin.Abstractions"
              d:BindingContext="{x:Static base:DesignViewModelLocator.InfoViewModel}"
              x:Class="IsiiSports.Pages.InfoPage"
              BackgroundColor="#e6e6e6"
@@ -26,7 +26,7 @@
         </ResourceDictionary>
     </ContentPage.Resources>
 
-  <Grid>
+    <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto" />
             <RowDefinition Height="*" />
@@ -36,17 +36,16 @@
               x:Name="GridHeader"
               Margin="0,0,0,2"
               BackgroundColor="{Binding Converter={StaticResource RandomColorConverter}}" />
-        <Grid Grid.Row="0"
-              BackgroundColor="#88000000">
+        
+        <Grid Grid.Row="0" BackgroundColor="#88000000">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
             <Grid Grid.Row="0">
-                <Grid Margin="12,24,12,12"
-                      HorizontalOptions="Start">
-                    <abstractions:CircleImage WidthRequest="80"
+                <Grid Margin="12,24,12,12" HorizontalOptions="Start">
+                    <!--<plugin:CircleImage WidthRequest="80"
                                         HeightRequest="80"
                                         BindingContext="{x:Reference Name=GridHeader}"
                                         FillColor="{Binding Path=BackgroundColor}" />
@@ -56,7 +55,13 @@
                            Style="{DynamicResource EvolveListItemTextStyle}"
                            TextColor="White"
                            FontSize="24"
-                           StyleId="EventItemCircleDate" />
+                           StyleId="EventItemCircleDate" />-->
+
+                    <plugin:CircleImage WidthRequest="80"
+                                        HeightRequest="80"
+                                        Source="{Binding ProfileImageUrl}"
+                                        />
+
                 </Grid>
             </Grid>
             <Label Text="{Binding Name}"

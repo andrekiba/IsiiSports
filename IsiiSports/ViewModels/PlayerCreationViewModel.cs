@@ -1,10 +1,10 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Acr.UserDialogs;
 using IsiiSports.Base;
+using IsiiSports.DataObjects;
 using IsiiSports.Helpers;
 using Newtonsoft.Json;
 using Xamarin.Forms;
@@ -13,33 +13,84 @@ namespace IsiiSports.ViewModels
 {
     public class PlayerCreationViewModel : BaseViewModel
     {
-        public String UserName { get; set; }
-        public String Email { get; set; }
-        public String Nickname { get; set; }
-        public String Description { get; set; }
+        #region Properties
 
-        public PlayerCreationViewModel()
-        {
-
-        }
+        public string UserName { get; set; }
+        public string Email { get; set; }
+        public string Nickname { get; set; }
+        public string Description { get; set; }
+        
+        #endregion
 
         protected override void ViewIsAppearing(object sender, EventArgs e)
         {
             base.ViewIsAppearing(sender, e);
-            this.UserName = Settings.UserFullName ?? String.Empty;
-            this.Email = Settings.PlayerEmail ?? String.Empty;
+            UserName = Settings.UserFullName ?? string.Empty;
+            Email = Settings.PlayerEmail ?? string.Empty;
         }
 
-
         private ICommand submitPlayerCommand;
-        public ICommand SubmitPlayerCommand => submitPlayerCommand ?? (submitPlayerCommand = new Command(ExecuteSubmitPlayerCommand));
-        private void ExecuteSubmitPlayerCommand(object item)
+        public ICommand SubmitPlayerCommand => submitPlayerCommand ?? (submitPlayerCommand = new DependentCommand(
+            async () => await ExecuteSubmitPlayerCommand(),
+            () => IsNotBusy && !string.IsNullOrEmpty(Nickname),
+            this,
+            () => Nickname
+        ));
+
+        private async Task ExecuteSubmitPlayerCommand()
         {
-            App.Instance.CurrentPlayer.Description = this.Description;
-            App.Instance.CurrentPlayer.Nickname = this.Nickname;
-            Settings.SerializedPlayer = JsonConvert.SerializeObject(App.Instance.CurrentPlayer);
-            MessagingCenter.Send(App.Instance, Messages.UserLoggedIn);
-            CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.MainContainer);
+            try
+            {
+                if (IsBusy)
+                    return;
+
+                IsBusy = true;
+
+                using (UserDialogs.Instance.Loading("Creazione del player in corso..."))
+                {
+                    //vedo in base alla mail se devo creare un nuovo player oppure no
+                    var player = await AzureService.PlayerStore.GetPlayerByMail(Settings.PlayerEmail);
+                    if (player != null)
+                    {
+                        //setto il player corrente dell'app
+                        App.Instance.CurrentPlayer = player;
+                        Settings.PlayerId = player.Id;
+                    }
+                    else
+                    {
+                        var newPlayer = new Player
+                        {
+                            Id = Settings.UserId,
+                            Name = Settings.UserFullName,
+                            Nickname = Nickname,
+                            Description = Description,
+                            Email = Settings.PlayerEmail,
+                            ProfileImageUrl = Settings.ProfileImageUrl
+                        };
+
+                        //salvo il player su Azure
+                        await AzureService.PlayerStore.InsertAsync(newPlayer);
+                        //setto il player corrente dell'app
+                        App.Instance.CurrentPlayer = newPlayer;
+                        Settings.PlayerId = newPlayer.Id;
+                    }
+
+                    //serializzo il player creato per utilizzarlo in futuro
+                    Settings.SerializedPlayer = JsonConvert.SerializeObject(App.Instance.CurrentPlayer);
+                }              
+
+                MessagingCenter.Send(App.Instance, Messages.UserLoggedIn);
+                CoreMethods.SwitchOutRootNavigation(NavigationContainerNames.MainContainer);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex);
+                await UserDialogs.Instance.AlertAsync("Errore durante la creazione del player...", "Error");
+            }
+            finally
+            {
+                IsBusy = false;
+            }
         }
     }
 }
