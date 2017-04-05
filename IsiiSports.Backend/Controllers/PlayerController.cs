@@ -9,6 +9,7 @@ using IsiiSports.DataObjects;
 
 namespace IsiiSports.Backend.Controllers
 {
+    [Authorize]
     public class PlayerController : TableController<Player>
     {
         protected override void Initialize(HttpControllerContext controllerContext)

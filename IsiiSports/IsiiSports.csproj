@@ -104,6 +104,7 @@
     <Compile Include="ViewModels\InfoViewModel.cs" />
     <Compile Include="Base\BottomBarTabbedFoNavigationContainer.cs" />
     <Compile Include="Base\Messages.cs" />
+    <Compile Include="ViewModels\TestViewModel.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="MainPage.xaml">

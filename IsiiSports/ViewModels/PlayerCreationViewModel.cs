@@ -53,47 +53,45 @@ namespace IsiiSports.ViewModels
 					#region Azure
 
 					//vedo in base alla mail se devo creare un nuovo player oppure no
-					//var player = await AzureService.PlayerStore.GetPlayerByMail(Settings.PlayerEmail);
-     //               if (player != null)
-     //               {
-     //                   //setto il player corrente dell'app
-     //                   App.Instance.CurrentPlayer = player;
-     //                   Settings.PlayerId = player.Id;
-     //               }
-     //               else
-     //               {
-     //                   var newPlayer = new Player
-     //                   {
-     //                       Id = Settings.UserId,
-     //                       Name = Settings.UserFullName,
-     //                       Nickname = Nickname,
-     //                       Description = Description,
-     //                       Email = Settings.PlayerEmail,
-     //                       ProfileImageUrl = Settings.ProfileImageUrl
-     //                   };
+					var player = await AzureService.PlayerStore.GetPlayerByMail(Settings.PlayerEmail);
+                    if (player != null)
+                    {
+                        //setto il player corrente dell'app
+                        App.Instance.CurrentPlayer = player;
+                        Settings.PlayerId = player.Id;
+                    }
+                    else
+                    {
+                        var newPlayer = new Player
+                        {
+                            Name = Settings.UserFullName,
+                            Nickname = Nickname,
+                            Description = Description,
+                            Email = Settings.PlayerEmail,
+                            ProfileImageUrl = Settings.ProfileImageUrl
+                        };
 
-     //                   //salvo il player su Azure
-     //                   await AzureService.PlayerStore.InsertAsync(newPlayer);
-     //                   //setto il player corrente dell'app
-     //                   App.Instance.CurrentPlayer = newPlayer;
-     //                   Settings.PlayerId = newPlayer.Id;
-     //               }
+                        //salvo il player su Azure
+                        await AzureService.PlayerStore.InsertAsync(newPlayer);
+                        //setto il player corrente dell'app
+                        App.Instance.CurrentPlayer = newPlayer;
+                        Settings.PlayerId = newPlayer.Id;
+                    }
 
 					#endregion
 
-					var newPlayer = new Player
-					{
-						Id = Settings.UserId,
-						Name = Settings.UserFullName,
-						Nickname = Nickname,
-						Description = Description,
-						Email = Settings.PlayerEmail,
-						ProfileImageUrl = Settings.ProfileImageUrl
-					};
+					//var newPlayer = new Player
+					//{
+					//	Name = Settings.UserFullName,
+					//	Nickname = Nickname,
+					//	Description = Description,
+					//	Email = Settings.PlayerEmail,
+					//	ProfileImageUrl = Settings.ProfileImageUrl
+					//};
 
-					//setto il player corrente dell'app
-					App.Instance.CurrentPlayer = newPlayer;
-					Settings.PlayerId = newPlayer.Id;
+					////setto il player corrente dell'app
+					//App.Instance.CurrentPlayer = newPlayer;
+					//Settings.PlayerId = newPlayer.Id;
 
                     //serializzo il player creato per utilizzarlo in futuro
                     Settings.SerializedPlayer = JsonConvert.SerializeObject(App.Instance.CurrentPlayer);

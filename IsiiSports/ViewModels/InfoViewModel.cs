@@ -33,7 +33,7 @@ namespace IsiiSports.ViewModels
 						//passo null per dire che tutte le prop devono essere aggiornate
 						RaisePropertyChanged(null);
 					}                
-                    MessagingCenter.Unsubscribe<App>(this, Messages.UserLoggedIn);
+                    //MessagingCenter.Unsubscribe<App>(this, Messages.UserLoggedIn);
                 });
             });
         }
